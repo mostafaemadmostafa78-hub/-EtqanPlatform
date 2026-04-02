@@ -2,107 +2,123 @@
 using ETQAN.API.Models;
 using ETQAN.API.Models.Enums;
 using ETQAN_BY_API.DTO;
+using ETQAN_BY_API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // مهم جداً للعمليات غير المتزامنة
+using Microsoft.Extensions.Caching.Memory;
 
-namespace ETQAN_BY_API.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class ArtisanAccountController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ArtisanAccountController : ControllerBase
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IMemoryCache _cache;
+    private readonly IEmailServices _emailServices;
+
+    public ArtisanAccountController(
+        ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager,
+        IMemoryCache cache,
+        IEmailServices emailServices)
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        _context = context;
+        _userManager = userManager;
+        _roleManager = roleManager;
+        _cache = cache;
+        _emailServices = emailServices;
+    }
 
-        public ArtisanAccountController(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+    [HttpPost("register-step1-send-otp")]
+    public async Task<IActionResult> RegisterStep1([FromBody] RegisterArtisanDto dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        // توحيد شكل الإيميل (كل الحروف صغيرة)
+        string normalizedEmail = dto.Email.ToLower().Trim();
+
+        if (await _userManager.FindByEmailAsync(normalizedEmail) != null)
+            return BadRequest(new { message = "هذا البريد الإلكتروني مسجل بالفعل" });
+
+        // توليد الكود وحفظه
+        string otp = new Random().Next(100000, 999999).ToString();
+        var cacheEntry = new OtpCacheEntry { UserData = dto, OtpCode = otp };
+
+        // حفظ في الكاش لمدة 15 دقيقة (زودنا الوقت قليلاً)
+        _cache.Set(normalizedEmail, cacheEntry, TimeSpan.FromMinutes(15));
+
+        _emailServices.SendEmail(new EmailDTO
         {
-            _context = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            To = normalizedEmail,
+            Subject = "كود تفعيل حساب إتقان",
+            Body = $"<h2>كود التفعيل: {otp}</h2>"
+        });
+
+        return Ok(new { message = "تم إرسال الكود بنجاح" });
+    }
+
+    
+    [HttpPost("register-step2-verify")]
+    public async Task<IActionResult> RegisterStep2([FromBody] VerifyOtpDto request)
+    {
+        // أضف سطر للـ Debug عشان تشوف الإيميل اللي جاي لك في الـ Console بتاع الـ C#
+        Console.WriteLine($"Attempting to verify: {request.Email} with OTP: {request.Otp}");
+
+        if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Otp))
+            return BadRequest(new { message = "البيانات ناقصة" });
+
+        string normalizedEmail = request.Email.ToLower().Trim();
+
+        if (!_cache.TryGetValue(normalizedEmail, out OtpCacheEntry cachedData))
+        {
+            return BadRequest(new { message = "انتهت صلاحية الكود أو الإيميل غير موجود" });
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterArtisanDto dto)
+        if (cachedData.OtpCode.Trim() != request.Otp.Trim())
         {
+            return BadRequest(new { message = "كود التحقق غير صحيح" });
+        }
+
+        var dto = cachedData.UserData;
+
+        // تنفيذ عملية الحفظ (نفس منطق كودك الأصلي)
+        var user = new ApplicationUser
+        {
+            FullName = dto.Fullname,
+            Email = dto.Email,
+            UserName = dto.Email,
+            PhoneNumber = dto.phoneNumber,
+            UserType = UserType.Artisan,
+           // Governorate = dto.Governorate,
+            EmailConfirmed = true
+        };
+
+        var result = await _userManager.CreateAsync(user, dto.Password);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+
+        if (!await _roleManager.RoleExistsAsync("Artisan"))
+            await _roleManager.CreateAsync(new IdentityRole("Artisan"));
+        await _userManager.AddToRoleAsync(user, "Artisan");
+
+        var artisan = new Artisan
+        {
+            Age = dto.Age,
+            NationalId = dto.NationalId,
+            MaritalStatus = (MaritalStatus)dto.MaritalStatus,
+            JobId = dto.JobId,
+            ApplicationUserId = user.Id,
+           // StartingPrice = dto.StartingPrice,
             
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            
+        };
 
-            try
-            {
-                // 2. التحقق من تكرار البريد الإلكتروني
-                var userExists = await _userManager.FindByEmailAsync(dto.Email);
-                if (userExists != null)
-                    return BadRequest(new { message = "هذا البريد الإلكتروني مسجل بالفعل" });
+        _context.Artisans.Add(artisan);
+        await _context.SaveChangesAsync();
 
-                // 3. التحقق من تكرار الرقم القومي (بشكل Async)
-                var nationalIdExists = await _context.Artisans.AnyAsync(a => a.NationalId == dto.NationalId);
-                if (nationalIdExists)
-                    return BadRequest(new { message = "هذا الرقم القومي مسجل مسبقاً لمستخدم آخر" });
+        _cache.Remove(normalizedEmail); // مسح الكاش
 
-                // 4. التحقق من وجود المهنة في قاعدة البيانات
-                var jobExists = await _context.Jobs.AnyAsync(j => j.Id == dto.JobId);
-                if (!jobExists)
-                    return BadRequest(new { message = "المهنة المختارة غير صالحة أو غير موجودة" });
-
-                // 5. إنشاء كائن المستخدم (Identity User)
-                var user = new ApplicationUser
-                {
-                    FullName = dto.Fullname,
-                    Email = dto.Email,
-                    UserName = dto.Email, // نستخدم الإيميل كـ UserName غالباً في الـ APIs
-                    UserType = UserType.Artisan,
-                    EmailConfirmed = false // سيتم تفعيلها بعد الـ OTP
-                };
-
-                // 6. حفظ المستخدم في Identity (تشفير كلمة السر يتم هنا تلقائياً)
-                var result = await _userManager.CreateAsync(user, dto.Password);
-
-                if (!result.Succeeded)
-                {
-                    var errors = result.Errors.Select(e => e.Description);
-                    return BadRequest(new { errors });
-                }
-
-                // 7. إضافة المستخدم لدور "Artisan" (تأكد من وجود الدور في قاعدة البيانات)
-                if (!await _roleManager.RoleExistsAsync("Artisan"))
-                {
-                    await _roleManager.CreateAsync(new IdentityRole("Artisan"));
-                }
-                await _userManager.AddToRoleAsync(user, "Artisan");
-
-                // 8. إنشاء سجل الحرفي وربطه بالمستخدم
-                var artisan = new Artisan
-                {
-                    Age = dto.Age,
-                    NationalId = dto.NationalId,
-                    // تحويل الرقم القادم من React إلى Enum إذا كان معرفاً كذلك في الـ Model
-                    MaritalStatus = (MaritalStatus)dto.MaritalStatus,
-                    JobId = dto.JobId,
-                    ApplicationUserId = user.Id,
-                  //  CreatedAt = DateTime.Now
-                };
-
-                _context.Artisans.Add(artisan);
-                await _context.SaveChangesAsync();
-
-                // 9. النجاح (نرسل userId لاستخدامه في صفحة الـ OTP إذا لزم الأمر)
-                return Ok(new
-                {
-                    message = "تم إنشاء الحساب بنجاح، يرجى تفعيل البريد الإلكتروني",
-                    userId = user.Id
-                });
-            }
-            catch (Exception ex)
-            {
-                // تسجيل الخطأ (Logging)
-                return StatusCode(500, new { message = "حدث خطأ داخلي في الخادم", details = ex.Message });
-            }
-        }
+        return Ok(new { message = "تم إنشاء الحساب بنجاح!" });
     }
 }

@@ -1,146 +1,78 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\",
+  "WorkspaceRootPath": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\controllers\\forgetpasswordcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\forgetpasswordcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\controllers\\clientaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\clientaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\controllers\\rewiewcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\rewiewcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\reviewreadonlydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\reviewreadonlydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\registerclientdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\registerclientdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\clientprofilefulldto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\clientprofilefulldto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\createproductdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\createproductdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\model\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\model\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\model\\otpcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\model\\otpcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\updateprofiledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\updateprofiledto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260312004112_AddOldPriceAndIsOffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ETQAN BY API\\Migrations\\20260312004112_AddOldPriceAndIsOffer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\model\\job.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\model\\job.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\model\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\model\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\model\\artisan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\model\\artisan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\model\\applicationuser .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\model\\applicationuser .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\controllers\\companyaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\controllers\\companyaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\companyaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\createcategorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\createcategorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\dto\\registercompanydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\registercompanydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\controllers\\clientaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\clientaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\controllers\\jobscontrolle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\jobscontrolle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\services\\verifyotpdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\services\\verifyotpdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\registerbyphonedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\registerbyphonedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\dto\\registerclientdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\registerclientdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\services\\ismsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\services\\ismsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\controllers\\artisanaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\artisanaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\services\\otpgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\services\\otpgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\dto\\registerartisandto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\dto\\registerartisandto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\registerartisandto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\migrations\\20260310194352_newdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\migrations\\20260310194352_newdatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\services\\otpcacheentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\services\\otpcacheentry.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310194055_iji.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ETQAN BY API\\Migrations\\20260310194055_iji.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\model\\applicationuser .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\model\\applicationuser .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310193810_addUse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ETQAN BY API\\Migrations\\20260310193810_addUse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\dto\\artisanlistdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\artisanlistdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310193149_yy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ETQAN BY API\\Migrations\\20260310193149_yy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\migrations\\20260311210217_addotptable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\migrations\\20260311210217_addotptable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\services\\emailservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\services\\emailservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\migrations\\20260310205226_fixcompanydti.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\migrations\\20260310205226_fixcompanydti.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\controllers\\emailcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\controllers\\emailcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\migrations\\20260310201158_intita.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\migrations\\20260310201158_intita.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\project mvc\\etqan by api\\etqan by api\\migrations\\20260310200651_intial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\migrations\\20260310200651_intial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\dto\\emaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\dto\\emaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\services\\iemailservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\services\\iemailservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|c:\\users\\mosta\\desktop\\etqan by api\\etqan by api\\migrations\\20260325093135_editgoverment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{41327137-2FCB-A32A-8FB7-57E1C605A577}|ETQAN BY API\\ETQAN BY API.csproj|solutionrelative:etqan by api\\migrations\\20260325093135_editgoverment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -150,447 +82,224 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ReviewReadOnlyDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\ReviewReadOnlyDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\ReviewReadOnlyDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\ReviewReadOnlyDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\ReviewReadOnlyDto.cs",
-              "ViewState": "AgIAAAYAAADgy8zMzMwswBgAAAABAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "ForgetPasswordController.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\ForgetPasswordController.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\ForgetPasswordController.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\ForgetPasswordController.cs",
+              "RelativeToolTip": "ETQAN BY API\\Controllers\\ForgetPasswordController.cs",
+              "ViewState": "AgIAAD4AAAAAZ2ZmZmYswEcAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T07:47:26.75Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "RewiewController.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\RewiewController.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\RewiewController.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\RewiewController.cs",
-              "RelativeToolTip": "ETQAN BY API\\Controllers\\RewiewController.cs",
-              "ViewState": "AgIAAE4AAABgmZmZmVkiwFgAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T07:47:12.923Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ProductsController.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\ProductsController.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\ProductsController.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\ProductsController.cs",
-              "RelativeToolTip": "ETQAN BY API\\Controllers\\ProductsController.cs",
-              "ViewState": "AgIAAHoAAADAmJmZmZkvwJQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:21:01.047Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\CategoryDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\CategoryDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\CategoryDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\CategoryDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T22:51:14.788Z",
+              "WhenOpened": "2026-04-02T18:49:51.417Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "RegisterCompanyDto.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterCompanyDto.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\RegisterCompanyDto.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterCompanyDto.cs",
+              "RelativeToolTip": "ETQAN BY API\\DTO\\RegisterCompanyDto.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAxwB4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T18:00:30.881Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "ClientAccountController.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\ClientAccountController.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\ClientAccountController.cs",
               "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\ClientAccountController.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\ClientAccountController.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\ClientAccountController.cs",
               "RelativeToolTip": "ETQAN BY API\\Controllers\\ClientAccountController.cs",
-              "ViewState": "AgIAAKMAAAAAAAAAAAAiwLsAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAJsAAAAAAAAAAAAAwLQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T21:07:11.722Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Program.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Program.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Program.cs",
-              "RelativeToolTip": "ETQAN BY API\\Program.cs",
-              "ViewState": "AgIAAHgAAAAAAAAAAAAiwH4AAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T20:26:08.779Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ProductDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\ProductDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\ProductDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\ProductDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\ProductDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:23:11.866Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "CreateProductDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\CreateProductDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\CreateProductDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\CreateProductDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\CreateProductDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:36:50.8Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ClientProfileFullDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\ClientProfileFullDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\ClientProfileFullDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\ClientProfileFullDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\ClientProfileFullDto.cs",
-              "ViewState": "AgIAAAkAAABAMTMzM3MlwB8AAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T23:31:47.332Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-02T17:10:31.146Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "RegisterClientDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterClientDto.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterClientDto.cs",
               "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\RegisterClientDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterClientDto.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterClientDto.cs",
               "RelativeToolTip": "ETQAN BY API\\DTO\\RegisterClientDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA4AAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAiwCAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T22:48:12.093Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-02T17:10:47.852Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Product.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\Product.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Model\\Product.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\Product.cs",
-              "RelativeToolTip": "ETQAN BY API\\Model\\Product.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAAwBoAAAABAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "VerifyOtpDto.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Services\\VerifyOtpDto.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Services\\VerifyOtpDto.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Services\\VerifyOtpDto.cs",
+              "RelativeToolTip": "ETQAN BY API\\Services\\VerifyOtpDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:29:18.471Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-02T11:42:19.596Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "OtpCode.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\OtpCode.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Model\\OtpCode.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\OtpCode.cs",
-              "RelativeToolTip": "ETQAN BY API\\Model\\OtpCode.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "CompanyAccountController.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\CompanyAccountController.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\CompanyAccountController.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\CompanyAccountController.cs",
+              "RelativeToolTip": "ETQAN BY API\\Controllers\\CompanyAccountController.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAB0vUwAAABcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T21:00:33.564Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-02T05:27:04.146Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "UpdateProfileDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\UpdateProfileDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\UpdateProfileDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\UpdateProfileDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\UpdateProfileDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
+              "DocumentIndex": 9,
+              "Title": "ApplicationUser .cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Model\\ApplicationUser .cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Model\\ApplicationUser .cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Model\\ApplicationUser .cs",
+              "RelativeToolTip": "ETQAN BY API\\Model\\ApplicationUser .cs",
+              "ViewState": "AgIAAA0AAADgl5mZmZkxwBYAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T23:34:00.825Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-25T09:30:35.255Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "20260312004112_AddOldPriceAndIsOffer.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260312004112_AddOldPriceAndIsOffer.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260312004112_AddOldPriceAndIsOffer.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260312004112_AddOldPriceAndIsOffer.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260312004112_AddOldPriceAndIsOffer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "RegisterArtisanDto.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterArtisanDto.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\RegisterArtisanDto.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterArtisanDto.cs",
+              "RelativeToolTip": "ETQAN BY API\\DTO\\RegisterArtisanDto.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAiwCQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-12T00:41:13.119Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-25T09:05:28.009Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Job.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\Job.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Model\\Job.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\Job.cs",
-              "RelativeToolTip": "ETQAN BY API\\Model\\Job.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "ArtisanAccountController.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\ArtisanAccountController.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\ArtisanAccountController.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\ArtisanAccountController.cs",
+              "RelativeToolTip": "ETQAN BY API\\Controllers\\ArtisanAccountController.cs",
+              "ViewState": "AgIAAEAAAACAAAAAAAAAwD0AAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T19:29:24.227Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Category.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\Category.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Model\\Category.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\Category.cs",
-              "RelativeToolTip": "ETQAN BY API\\Model\\Category.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T23:29:05.283Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Artisan.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\Artisan.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Model\\Artisan.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\Artisan.cs",
-              "RelativeToolTip": "ETQAN BY API\\Model\\Artisan.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAkwBwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-09T23:50:54.912Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-25T08:58:56.184Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 17,
-              "Title": "ApplicationUser .cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\ApplicationUser .cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Model\\ApplicationUser .cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Model\\ApplicationUser .cs",
-              "RelativeToolTip": "ETQAN BY API\\Model\\ApplicationUser .cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAxwBwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-09T23:51:26.79Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "CompanyAccountController.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\CompanyAccountController.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\CompanyAccountController.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\CompanyAccountController.cs",
-              "RelativeToolTip": "ETQAN BY API\\Controllers\\CompanyAccountController.cs",
-              "ViewState": "AgIAAGgAAAAAAAAAAAAgwIkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-09T23:39:00.999Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "CreateCategoryDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\CreateCategoryDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\CreateCategoryDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\CreateCategoryDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\CreateCategoryDto.cs",
+              "Title": "20260325093135_editgoverment.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260325093135_editgoverment.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260325093135_editgoverment.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260325093135_editgoverment.cs",
+              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260325093135_editgoverment.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T22:46:26.199Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-25T09:31:36.572Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "JobsControlle.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\JobsControlle.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\JobsControlle.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\JobsControlle.cs",
-              "RelativeToolTip": "ETQAN BY API\\Controllers\\JobsControlle.cs",
-              "ViewState": "AgIAAB4AAADAl5mZmZkjwFsAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 8,
+              "Title": "OtpCacheEntry.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Services\\OtpCacheEntry.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Services\\OtpCacheEntry.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Services\\OtpCacheEntry.cs",
+              "RelativeToolTip": "ETQAN BY API\\Services\\OtpCacheEntry.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T22:53:24.388Z"
+              "WhenOpened": "2026-03-25T09:36:07.923Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "CategoriesController.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\CategoriesController.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\CategoriesController.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Controllers\\CategoriesController.cs",
-              "RelativeToolTip": "ETQAN BY API\\Controllers\\CategoriesController.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAIwFgAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 10,
+              "Title": "ArtisanListDto.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\ArtisanListDto.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\ArtisanListDto.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\ArtisanListDto.cs",
+              "RelativeToolTip": "ETQAN BY API\\DTO\\ArtisanListDto.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAABQPQAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T22:54:02.138Z"
+              "WhenOpened": "2026-03-25T09:05:19.015Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "ISmsService.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Services\\ISmsService.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Services\\ISmsService.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Services\\ISmsService.cs",
-              "RelativeToolTip": "ETQAN BY API\\Services\\ISmsService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T21:36:52.007Z"
+              "DocumentIndex": 11,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\appsettings.json",
+              "RelativeDocumentMoniker": "ETQAN BY API\\appsettings.json",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\appsettings.json",
+              "RelativeToolTip": "ETQAN BY API\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-25T07:36:36.947Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "RegisterByPhoneDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterByPhoneDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\RegisterByPhoneDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterByPhoneDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\RegisterByPhoneDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAjAAAAAAAAAA==",
+              "DocumentIndex": 12,
+              "Title": "EmailServices.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Services\\EmailServices.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Services\\EmailServices.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Services\\EmailServices.cs",
+              "RelativeToolTip": "ETQAN BY API\\Services\\EmailServices.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAiwBoAAAA6AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T21:49:40.639Z"
+              "WhenOpened": "2026-03-25T07:05:57.215Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "20260311210217_AddOtpTable.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260311210217_AddOtpTable.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260311210217_AddOtpTable.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260311210217_AddOtpTable.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260311210217_AddOtpTable.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 15,
+              "Title": "EmailDTO.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\EmailDTO.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\EmailDTO.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\DTO\\EmailDTO.cs",
+              "RelativeToolTip": "ETQAN BY API\\DTO\\EmailDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T21:02:17.33Z"
+              "WhenOpened": "2026-03-25T07:27:16.659Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "OtpGenerator.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Services\\OtpGenerator.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Services\\OtpGenerator.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Services\\OtpGenerator.cs",
-              "RelativeToolTip": "ETQAN BY API\\Services\\OtpGenerator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 14,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Program.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Program.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Program.cs",
+              "RelativeToolTip": "ETQAN BY API\\Program.cs",
+              "ViewState": "AgIAAIgAAAAAAAAAAAAmwJ0AAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-11T21:03:38.034Z"
+              "WhenOpened": "2026-03-25T07:06:14.632Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "RegisterArtisanDto.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterArtisanDto.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\DTO\\RegisterArtisanDto.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\DTO\\RegisterArtisanDto.cs",
-              "RelativeToolTip": "ETQAN BY API\\DTO\\RegisterArtisanDto.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAA7wCYAAAABAAAAAAAAAA==",
+              "DocumentIndex": 16,
+              "Title": "IEmailServices.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Services\\IEmailServices.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Services\\IEmailServices.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Services\\IEmailServices.cs",
+              "RelativeToolTip": "ETQAN BY API\\Services\\IEmailServices.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T19:00:59.1Z"
+              "WhenOpened": "2026-03-25T07:05:33.336Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Data\\ApplicationDbContext.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Data\\ApplicationDbContext.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Data\\ApplicationDbContext.cs",
-              "RelativeToolTip": "ETQAN BY API\\Data\\ApplicationDbContext.cs",
-              "ViewState": "AgIAAA4AAACAzMzMzMwowBUAAAA0AAAAAAAAAA==",
+              "DocumentIndex": 13,
+              "Title": "EmailController.cs",
+              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\EmailController.cs",
+              "RelativeDocumentMoniker": "ETQAN BY API\\Controllers\\EmailController.cs",
+              "ToolTip": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\Controllers\\EmailController.cs",
+              "RelativeToolTip": "ETQAN BY API\\Controllers\\EmailController.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAowA8AAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-09T23:43:06.895Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "20260310205226_fixcompanydti.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310205226_fixcompanydti.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260310205226_fixcompanydti.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310205226_fixcompanydti.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260310205226_fixcompanydti.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T20:52:27.147Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "20260310201158_intita.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310201158_intita.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260310201158_intita.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310201158_intita.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260310201158_intita.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T20:11:58.997Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "20260310200651_intial.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310200651_intial.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260310200651_intial.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310200651_intial.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260310200651_intial.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T20:06:51.244Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "20260310194352_newdatabase.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310194352_newdatabase.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260310194352_newdatabase.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310194352_newdatabase.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260310194352_newdatabase.cs",
-              "ViewState": "AgIAACsBAAAArZmZmRkuwD0BAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T19:43:52.855Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "20260310194055_iji.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310194055_iji.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260310194055_iji.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310194055_iji.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260310194055_iji.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T19:40:55.767Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "20260310193810_addUse.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310193810_addUse.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260310193810_addUse.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310193810_addUse.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260310193810_addUse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T19:38:11.104Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "20260310193149_yy.cs",
-              "DocumentMoniker": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310193149_yy.cs",
-              "RelativeDocumentMoniker": "ETQAN BY API\\Migrations\\20260310193149_yy.cs",
-              "ToolTip": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\Migrations\\20260310193149_yy.cs",
-              "RelativeToolTip": "ETQAN BY API\\Migrations\\20260310193149_yy.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-10T19:31:49.437Z"
+              "WhenOpened": "2026-03-25T06:38:11.361Z"
             }
           ]
         }

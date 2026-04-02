@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\ETQAN BY API.csproj": {}
+    "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\ETQAN BY API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\ETQAN BY API.csproj": {
+    "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\ETQAN BY API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\ETQAN BY API.csproj",
+        "projectUniqueName": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\ETQAN BY API.csproj",
         "projectName": "ETQAN BY API",
-        "projectPath": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\ETQAN BY API.csproj",
+        "projectPath": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\ETQAN BY API.csproj",
         "packagesPath": "C:\\Users\\mosta\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mosta\\Desktop\\Project MVC\\ETQAN BY API\\ETQAN BY API\\obj\\",
+        "outputPath": "C:\\Users\\mosta\\Desktop\\ETQAN BY API\\ETQAN BY API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

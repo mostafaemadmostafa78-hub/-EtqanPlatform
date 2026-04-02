@@ -1,5 +1,6 @@
 ﻿using ETQAN.API.Models;
 using ETQAN.API.Models.Enums;
+using ETQAN_BY_API.Model;
 using System.ComponentModel.DataAnnotations;
 
 public class Artisan
@@ -19,11 +20,21 @@ public class Artisan
 
     [Required]
     public int JobId { get; set; }
-
     public Job Job { get; set; }
 
     [Required]
     public string ApplicationUserId { get; set; }
-
     public ApplicationUser User { get; set; }
+
+    // --- الإضافات الجديدة الاحترافية ---
+    [Range(0, 100000)]
+    public decimal StartingPrice { get; set; } // سعر الخدمة بيبدأ من كام؟
+
+    public int ExperienceYears { get; set; } // سنين الخبرة
+
+    [StringLength(500)]
+    public string? Bio { get; set; } // نبذة تعريفية عن الحرفي
+
+    // علاقة مع معرض الأعمال (الصور)
+    public ICollection<ArtisanPortfolio>? Portfolio { get; set; }
 }

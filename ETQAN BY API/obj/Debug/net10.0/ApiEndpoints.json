@@ -1,15 +1,63 @@
 [
   {
-    "ContainingType": "ETQAN_BY_API.Controllers.ArtisanAccountController",
-    "Method": "Register",
-    "RelativePath": "api/ArtisanAccount/register",
+    "ContainingType": "ArtisanAccountController",
+    "Method": "RegisterStep1",
+    "RelativePath": "api/ArtisanAccount/register-step1-send-otp",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "ETQAN_BY_API.DTO.RegisterArtisanDto",
+        "Type": "RegisterArtisanDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ArtisanAccountController",
+    "Method": "RegisterStep2",
+    "RelativePath": "api/ArtisanAccount/register-step2-verify",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ETQAN_BY_API.Services.VerifyOtpDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ETQAN_BY_API.Controllers.ArtisansController",
+    "Method": "GetAll",
+    "RelativePath": "api/Artisans",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ETQAN_BY_API.Controllers.ArtisansController",
+    "Method": "GetById",
+    "RelativePath": "api/Artisans/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -17,8 +65,40 @@
   },
   {
     "ContainingType": "ETQAN_BY_API.Controllers.ClientAccountController",
-    "Method": "GetFullProfile",
-    "RelativePath": "api/ClientAccount/full-profile",
+    "Method": "RegisterStep1",
+    "RelativePath": "api/ClientAccount/register-step1-send-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ETQAN_BY_API.DTO.RegisterClientDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ETQAN_BY_API.Controllers.ClientAccountController",
+    "Method": "RegisterStep2",
+    "RelativePath": "api/ClientAccount/register-step2-verify",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ETQAN_BY_API.Services.VerifyOtpDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ClientProfileController",
+    "Method": "GetHistory",
+    "RelativePath": "api/ClientProfile/history",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -26,32 +106,36 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ETQAN_BY_API.Controllers.ClientAccountController",
-    "Method": "Register",
-    "RelativePath": "api/ClientAccount/register",
-    "HttpMethod": "POST",
+    "ContainingType": "ClientProfileController",
+    "Method": "GetProfileInfo",
+    "RelativePath": "api/ClientProfile/info",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "RegisterClientDto",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ETQAN_BY_API.Controllers.ClientAccountController",
+    "ContainingType": "ClientProfileController",
+    "Method": "GetMyReviews",
+    "RelativePath": "api/ClientProfile/my-reviews",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ClientProfileController",
     "Method": "UpdateProfile",
-    "RelativePath": "api/ClientAccount/update-profile",
+    "RelativePath": "api/ClientProfile/update",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "UpdateProfileDto",
+        "Type": "ETQAN_BY_API.DTO.UpdateProfileDto",
         "IsRequired": true
       }
     ],
@@ -59,8 +143,8 @@
   },
   {
     "ContainingType": "ETQAN_BY_API.Controllers.CompanyAccountController",
-    "Method": "Register",
-    "RelativePath": "api/CompanyAccount/register",
+    "Method": "RegisterStep1",
+    "RelativePath": "api/CompanyAccount/register-step1-send-otp",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -92,6 +176,54 @@
       },
       {
         "Name": "ConfirmPassword",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ETQAN_BY_API.Controllers.CompanyAccountController",
+    "Method": "RegisterStep2",
+    "RelativePath": "api/CompanyAccount/register-step2-verify",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ETQAN_BY_API.Services.VerifyOtpDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ETQAN_BY_API.Controllers.EmailController",
+    "Method": "SendEmail",
+    "RelativePath": "api/Email",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ETQAN_BY_API.DTO.EmailDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ETQAN_BY_API.Controllers.ForgetPasswordController",
+    "Method": "ForgotPasswordStep1",
+    "RelativePath": "api/ForgetPassword/forgot-password-check-email",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "email",
         "Type": "System.String",
         "IsRequired": false
       }
@@ -139,6 +271,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "ETQAN_BY_API.Controllers.OrdersController",
+    "Method": "Checkout",
+    "RelativePath": "api/Orders/checkout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cartItems",
+        "Type": "System.Collections.Generic.List\u00601[[ETQAN_BY_API.DTO.CartItemDto, ETQAN BY API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "ProductsController",

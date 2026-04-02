@@ -32,9 +32,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 
 // ======================
-// SMS Service
+// Email Service
 // ======================
-//builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<IEmailServices, EmailServices>();
 
 
 // ======================
@@ -142,7 +142,7 @@ using (var scope = app.Services.CreateScope())
 
 
 // ======================
-++
+
 // Middleware
 // ======================
 app.UseSwagger();

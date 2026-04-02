@@ -5,7 +5,7 @@
 namespace ETQAN_BY_API.Migrations
 {
     /// <inheritdoc />
-    public partial class intita : Migration
+    public partial class editgoverment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

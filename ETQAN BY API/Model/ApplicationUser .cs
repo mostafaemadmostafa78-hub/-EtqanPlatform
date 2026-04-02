@@ -10,8 +10,8 @@ namespace ETQAN.API.Models
         [Required]
         [StringLength(100, MinimumLength = 3)]
         public string FullName { get; set; }
-        
 
+        public string? ProfilePicture { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string ? CompanyName { get; set; }
         public string? CommercialRegister { get; set; }
@@ -20,7 +20,7 @@ namespace ETQAN.API.Models
         public Client? Client { get; set; }
         public Artisan? Artisan { get; set; }
         public Company? Company { get; set; }
-        public string Governorate { get; set; }
+        public string? Governorate { get; set; }
 
         public ICollection<Order>? Orders { get; set; }
         public ICollection<Review>? ReviewsWritten { get; set; }

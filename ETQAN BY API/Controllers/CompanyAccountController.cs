@@ -1,14 +1,12 @@
-﻿using ETQAN.API.Data;
+using ETQAN.API.Data;
 using ETQAN.API.Models;
 using ETQAN.API.Models.Enums;
 using ETQAN_BY_API.DTO;
+using ETQAN_BY_API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ETQAN_BY_API.Controllers
 {
@@ -18,121 +16,138 @@ namespace ETQAN_BY_API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IConfiguration _configuration;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMemoryCache _cache;
+        private readonly IEmailServices _emailServices;
 
         public CompanyAccountController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            IConfiguration configuration)
+            RoleManager<IdentityRole> roleManager,
+            IMemoryCache cache,
+            IEmailServices emailServices)
         {
             _context = context;
             _userManager = userManager;
-            _configuration = configuration;
+            _roleManager = roleManager;
+            _cache = cache;
+            _emailServices = emailServices;
         }
 
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromForm] RegisterCompanyDto dto)
+        // ==========================================
+        // الخطوة الأولى: رفع الملف، توليد OTP، وحفظ مؤقت
+        // ==========================================
+        [HttpPost("register-step1-send-otp")]
+        public async Task<IActionResult> RegisterStep1([FromForm] RegisterCompanyDto dto)
         {
-            if (dto.CommercialRegisterFile == null || dto.CommercialRegisterFile.Length == 0)
-                return BadRequest("يرجى رفع ملف السجل التجاري");
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            // 1. تحديد مسار الحفظ (مثلاً فولدر اسمه Uploads/Registers)
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/registers");
+            string normalizedEmail = dto.Email.ToLower().Trim();
+
+            // 1. التحقق من وجود الإيميل
+            if (await _userManager.FindByEmailAsync(normalizedEmail) != null)
+                return BadRequest(new { message = "هذا البريد الإلكتروني مسجل بالفعل" });
+
+            // 2. معالجة وحفظ ملف السجل التجاري
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/companies");
             if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
-            // 2. إنشاء اسم فريد للملف عشان ميتكررش
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.CommercialRegisterFile.FileName);
             var filePath = Path.Combine(uploadsFolder, fileName);
 
-            // 3. حفظ الملف على السيرفر
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await dto.CommercialRegisterFile.CopyToAsync(stream);
             }
 
-            // 4. إنشاء اليوزر وتخزين "مسار الملف" في الداتابيز
-            var user = new ApplicationUser
+            // 3. توليد الكود OTP
+            string otp = new Random().Next(100000, 999999).ToString();
+
+            // 4. حفظ البيانات في الكاش (بما فيها مسار الملف)
+            var cacheEntry = new CompanyOtpCacheEntry
             {
-                FullName = dto.CompanyName,
-                Email = dto.Email,
-                UserName= dto.Email,
                 CompanyName = dto.CompanyName,
-                // بنخزن اللينك أو اسم الملف فقط في الداتابيز
-                CommercialRegister = "/uploads/registers/" + fileName,
-                UserType = UserType.Company
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Password = dto.Password,
+                SavedFilePath = "/uploads/companies/" + fileName,
+                OtpCode = otp
             };
 
-            var result = await _userManager.CreateAsync(user, dto.Password);
-            // ... باقي الكود الخاص بالـ Roles والرد
-        
-                if (result.Succeeded)
+            _cache.Set($"company_otp_{normalizedEmail}", cacheEntry, TimeSpan.FromMinutes(60));
+
+            // 5. إرسال الإيميل
+            try
+            {
+                _emailServices.SendEmail(new EmailDTO
                 {
+                    To = normalizedEmail,
+                    Subject = "كود تفعيل حساب شركة - إتقان",
+                    Body = $"<div style='direction:rtl;'><h2>كود تفعيل الشركة هو: {otp}</h2><p>هذا الكود صالح لمدة 15 دقيقة.</p></div>"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "فشل إرسال الإيميل، تأكد من الإعدادات", detail = ex.Message });
+            }
 
-                    // 3. إضافة الـ Role (تأكد إنها متكريتة في Program.cs زي ما عملنا)
-                    await _userManager.AddToRoleAsync(user, "COMPANY");
+            return Ok(new { message = "تم إرسال كود التحقق بنجاح" });
+        }
 
-                    return Ok(new { Message = "Company registered successfully" });
-                }
+        // ==========================================
+        // الخطوة الثانية: التحقق وإنشاء الحساب النهائي
+        // ==========================================
+        [HttpPost("register-step2-verify")]
+        public async Task<IActionResult> RegisterStep2([FromBody] VerifyOtpDto request)
+        {
+            string normalizedEmail = request.Email.ToLower().Trim();
+            string cacheKey = $"company_otp_{normalizedEmail}";
 
-                return BadRequest(result.Errors);
+            if (!_cache.TryGetValue(cacheKey, out CompanyOtpCacheEntry cachedData))
+            {
+                return BadRequest(new { message = "انتهت صلاحية الكود أو البريد غير موجود" });
+            }
+
+            if (cachedData.OtpCode != request.Otp)
+            {
+                return BadRequest(new { message = "كود التحقق غير صحيح" });
+            }
+
+            // استخدام الـ Transaction لضمان إنشاء الـ User والـ Role والبروفايل معاً
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var user = new ApplicationUser
+                {
+                    FullName = cachedData.CompanyName,
+                    Email = cachedData.Email,
+                    UserName = cachedData.Email,
+                    PhoneNumber = cachedData.PhoneNumber,
+                    CompanyName = cachedData.CompanyName,
+                    CommercialRegister = cachedData.SavedFilePath, // المسار اللي حفظناه في Step 1
+                    UserType = UserType.Company,
+                    EmailConfirmed = true
+                };
+
+                var result = await _userManager.CreateAsync(user, cachedData.Password);
+                if (!result.Succeeded) return BadRequest(result.Errors);
+
+                // التأكد من وجود الـ Role
+                if (!await _roleManager.RoleExistsAsync("Company"))
+                    await _roleManager.CreateAsync(new IdentityRole("Company"));
+
+                await _userManager.AddToRoleAsync(user, "Company");
+
+                await transaction.CommitAsync();
+                _cache.Remove(cacheKey);
+
+                return Ok(new { message = "تم إنشاء حساب الشركة وتفعيله بنجاح!" });
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, new { message = "حدث خطأ أثناء حفظ البيانات", detail = ex.Message });
             }
         }
-        //[HttpPost("register/company")]
-        //public async Task<IActionResult> RegisterCompany([FromForm] RegisterCompanyDto dto)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-
-        //    using var transaction = await _context.Database.BeginTransactionAsync();
-
-        //    try
-        //    {
-        //        var user = new ApplicationUser
-        //        {
-        //            FullName = dto.Email,
-        //            Email = dto.Email,
-        //            UserName = dto.Email,
-        //            PhoneNumber = dto.PhoneNumber,
-        //            UserType = UserType.Company
-        //        };
-
-        //        var result = await _userManager.CreateAsync(user, dto.Password);
-
-        //        if (!result.Succeeded)
-        //            return BadRequest(result.Errors);
-
-        //        await _userManager.AddToRoleAsync(user, "Company");
-
-        //        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/commercial_registers");
-        //        if (!Directory.Exists(uploadsFolder))
-        //            Directory.CreateDirectory(uploadsFolder);
-
-        //        string uniqueFileName = Guid.NewGuid().ToString() + "_" + dto.CommercialRegisterFile.FileName;
-        //        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-        //        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            await dto.CommercialRegisterFile.CopyToAsync(fileStream);
-        //        }
-
-        //        _context.Companies.Add(new Company
-        //        {
-        //            ApplicationUserId = user.Id,
-        //            CompanyName = dto.CompanyName,
-        //            CommercialRegister = "/uploads/commercial_registers/" + uniqueFileName
-        //        });
-
-        //        await _context.SaveChangesAsync();
-        //        await transaction.CommitAsync();
-
-        //        return Ok(new { message = "Company registered successfully" });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await transaction.RollbackAsync();
-        //        return StatusCode(500, new { error = "Internal Server Error", details = ex.Message });
-        //    }
-        //}
-    
+    }
 }

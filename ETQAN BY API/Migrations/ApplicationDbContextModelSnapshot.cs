@@ -37,6 +37,13 @@ namespace ETQAN_BY_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ExperienceYears")
+                        .HasColumnType("int");
+
                     b.Property<int>("JobId")
                         .HasColumnType("int");
 
@@ -47,6 +54,9 @@ namespace ETQAN_BY_API.Migrations
                         .IsRequired()
                         .HasMaxLength(14)
                         .HasColumnType("nvarchar(14)");
+
+                    b.Property<decimal>("StartingPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -92,7 +102,6 @@ namespace ETQAN_BY_API.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Governorate")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -117,6 +126,9 @@ namespace ETQAN_BY_API.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -392,6 +404,32 @@ namespace ETQAN_BY_API.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("ServiceRequests");
+                });
+
+            modelBuilder.Entity("ETQAN_BY_API.Model.ArtisanPortfolio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ArtisanId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtisanId");
+
+                    b.ToTable("ArtisanPortfolio");
                 });
 
             modelBuilder.Entity("ETQAN_BY_API.Model.OtpCode", b =>
@@ -827,6 +865,17 @@ namespace ETQAN_BY_API.Migrations
                     b.Navigation("Client");
                 });
 
+            modelBuilder.Entity("ETQAN_BY_API.Model.ArtisanPortfolio", b =>
+                {
+                    b.HasOne("Artisan", "Artisan")
+                        .WithMany("Portfolio")
+                        .HasForeignKey("ArtisanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artisan");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -887,6 +936,11 @@ namespace ETQAN_BY_API.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Artisan", b =>
+                {
+                    b.Navigation("Portfolio");
                 });
 
             modelBuilder.Entity("ETQAN.API.Models.ApplicationUser", b =>

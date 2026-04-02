@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ETQAN_BY_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260311210217_AddOtpTable")]
-    partial class AddOtpTable
+    [Migration("20260321234746_newDatabase")]
+    partial class newDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,53 @@ namespace ETQAN_BY_API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ApplicationUser", b =>
+            modelBuilder.Entity("Artisan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ExperienceYears")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaritalStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NationalId")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .HasColumnType("nvarchar(14)");
+
+                    b.Property<decimal>("StartingPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("Artisans");
+                });
+
+            modelBuilder.Entity("ETQAN.API.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -59,6 +105,7 @@ namespace ETQAN_BY_API.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Governorate")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -84,6 +131,9 @@ namespace ETQAN_BY_API.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -108,42 +158,6 @@ namespace ETQAN_BY_API.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Artisan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("JobId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaritalStatus")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NationalId")
-                        .IsRequired()
-                        .HasMaxLength(14)
-                        .HasColumnType("nvarchar(14)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
-
-                    b.HasIndex("JobId");
-
-                    b.ToTable("Artisans");
                 });
 
             modelBuilder.Entity("ETQAN.API.Models.Category", b =>
@@ -294,10 +308,16 @@ namespace ETQAN_BY_API.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsOffer")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<decimal>("OldPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -355,6 +375,9 @@ namespace ETQAN_BY_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("ArtisanId")
                         .HasColumnType("int");
 
@@ -378,11 +401,39 @@ namespace ETQAN_BY_API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationUserId");
+
                     b.HasIndex("ArtisanId");
 
                     b.HasIndex("ClientId");
 
                     b.ToTable("ServiceRequests");
+                });
+
+            modelBuilder.Entity("ETQAN_BY_API.Model.ArtisanPortfolio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ArtisanId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtisanId");
+
+                    b.ToTable("ArtisanPortfolio");
                 });
 
             modelBuilder.Entity("ETQAN_BY_API.Model.OtpCode", b =>
@@ -698,7 +749,7 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("Artisan", b =>
                 {
-                    b.HasOne("ApplicationUser", "User")
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", "User")
                         .WithOne("Artisan")
                         .HasForeignKey("Artisan", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -717,7 +768,7 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("ETQAN.API.Models.Client", b =>
                 {
-                    b.HasOne("ApplicationUser", "User")
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", "User")
                         .WithOne("Client")
                         .HasForeignKey("ETQAN.API.Models.Client", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -728,7 +779,7 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("ETQAN.API.Models.Company", b =>
                 {
-                    b.HasOne("ApplicationUser", "User")
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", "User")
                         .WithOne("Company")
                         .HasForeignKey("ETQAN.API.Models.Company", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -739,7 +790,7 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("ETQAN.API.Models.Order", b =>
                 {
-                    b.HasOne("ApplicationUser", "User")
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", "User")
                         .WithMany("Orders")
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -786,7 +837,7 @@ namespace ETQAN_BY_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationUser", "Reviewer")
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", "Reviewer")
                         .WithMany("ReviewsWritten")
                         .HasForeignKey("ReviewerId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -799,6 +850,10 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("ETQAN.API.Models.ServiceRequest", b =>
                 {
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", null)
+                        .WithMany("ServiceRequests")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Artisan", "Artisan")
                         .WithMany()
                         .HasForeignKey("ArtisanId");
@@ -814,6 +869,17 @@ namespace ETQAN_BY_API.Migrations
                     b.Navigation("Client");
                 });
 
+            modelBuilder.Entity("ETQAN_BY_API.Model.ArtisanPortfolio", b =>
+                {
+                    b.HasOne("Artisan", "Artisan")
+                        .WithMany("Portfolio")
+                        .HasForeignKey("ArtisanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artisan");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -825,7 +891,7 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("ApplicationUser", null)
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -834,7 +900,7 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("ApplicationUser", null)
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -849,7 +915,7 @@ namespace ETQAN_BY_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationUser", null)
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -858,7 +924,7 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("ApplicationUser", null)
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -867,7 +933,7 @@ namespace ETQAN_BY_API.Migrations
 
             modelBuilder.Entity("RefreshToken", b =>
                 {
-                    b.HasOne("ApplicationUser", "User")
+                    b.HasOne("ETQAN.API.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -876,7 +942,12 @@ namespace ETQAN_BY_API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ApplicationUser", b =>
+            modelBuilder.Entity("Artisan", b =>
+                {
+                    b.Navigation("Portfolio");
+                });
+
+            modelBuilder.Entity("ETQAN.API.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Artisan");
 
@@ -887,6 +958,8 @@ namespace ETQAN_BY_API.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("ReviewsWritten");
+
+                    b.Navigation("ServiceRequests");
                 });
 
             modelBuilder.Entity("ETQAN.API.Models.Category", b =>

@@ -101,6 +101,39 @@ namespace ETQAN_BY_API.Controllers
 
             return Ok(response);
         }
+        [HttpPost("checkout")]
+        [Authorize]
+        public async Task<IActionResult> Checkout([FromBody] List<CartItemDto> cartItems)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // 1. إنشاء الـ Order الأساسي
+            var order = new Order
+            {
+                ApplicationUserId = userId,
+                OrderDate = DateTime.Now,
+                TotalPrice = cartItems.Sum(item => item.Price * item.Quantity)
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync(); // بنسيف عشان ناخد الـ OrderId
+
+            // 2. تحويل كل حتة في السلة لـ OrderItem في الداتابيز
+            foreach (var item in cartItems)
+            {
+                var orderItem = new OrderItem
+                {
+                    OrderId = order.Id,
+                    ProductId = item.Id,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.Price
+                };
+                _context.OrderItems.Add(orderItem);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "تم إتمام الطلب بنجاح!" });
+        }
         //[HttpPost]
         //public async Task<IActionResult> CreateOrder(CreateOrderDto dto)
         //{
