@@ -26,7 +26,7 @@ public class Artisan
     public string ApplicationUserId { get; set; }
     public ApplicationUser User { get; set; }
 
-    // --- الإضافات الجديدة الاحترافية ---
+    // ---الإضافات الجديدة  ---
     [Range(0, 100000)]
     public decimal StartingPrice { get; set; } // سعر الخدمة بيبدأ من كام؟
 
@@ -36,5 +36,8 @@ public class Artisan
     public string? Bio { get; set; } // نبذة تعريفية عن الحرفي
 
     // علاقة مع معرض الأعمال (الصور)
-    public ICollection<ArtisanPortfolio>? Portfolio { get; set; }
+
+ //ah 
+        public ICollection<ArtisanPortfolio> Portfolio { get; set; } = new List<ArtisanPortfolio>();
+        //.
 }

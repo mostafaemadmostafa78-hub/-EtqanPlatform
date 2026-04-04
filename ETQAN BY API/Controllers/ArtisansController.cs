@@ -1,8 +1,10 @@
 ﻿using ETQAN.API.Data;
 using ETQAN_BY_API.DTO;
+using ETQAN_BY_API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ETQAN_BY_API.Controllers
 {
@@ -13,8 +15,17 @@ namespace ETQAN_BY_API.Controllers
     public class ArtisansController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        //ah
+        private readonly IArtisanService _artisanService; 
 
-        public ArtisansController(ApplicationDbContext context) => _context = context;
+        
+        public ArtisansController(ApplicationDbContext context, IArtisanService artisanService)
+        {
+            _context = context;
+            _artisanService = artisanService; // هنا بنربط الخدمة
+        }
+        //.
+ 
 
         
         [HttpGet]
@@ -88,5 +99,54 @@ namespace ETQAN_BY_API.Controllers
                 return StatusCode(500, new { message = "حدث خطأ أثناء جلب بيانات البروفايل", error = ex.Message });
             }
         }
-    } 
+        //ah
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateArtisan(string id, [FromBody] ArtisanDetailsDto dto)
+        {
+            var result = await _artisanService.UpdateArtisanAsync(id, dto);
+            if (!result) return NotFound("الحرفي غير موجود");
+
+            return Ok(new { message = "تم تحديث البيانات بنجاح" });
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteArtisan(string id)
+        {
+            var result = await _artisanService.DeleteArtisanAsync(id);
+            if (!result) return NotFound("فشل الحذف، الحرفي غير موجود");
+
+            return Ok(new { message = "تم حذف الحساب بنجاح" });
+        }
+
+        // [Authorize(Roles = "Artisan")] // فكي التعليق ده لو عايزة الحرفيين بس اللي يرفعوا
+        [HttpPost("portfolio/add")]
+        public async Task<IActionResult> AddPortfolioImage([FromForm] AddPortfolioImageDto dto)
+        {
+            // سحب الـ ID بتاع الحرفي من الـ Token
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (dto.Image == null) return BadRequest("يرجى اختيار صورة أولاً");
+
+            var result = await _artisanService.AddImageToPortfolioAsync(userId, dto);
+
+            if (result) return Ok(new { message = "تم إضافة الصورة لمعرض أعمالك بنجاح" });
+
+            return BadRequest("حدث خطأ أثناء رفع الصورة");
+        }
+
+        // [Authorize(Roles = "Artisan")]
+        [HttpDelete("portfolio/delete/{imageId}")]
+        public async Task<IActionResult> DeletePortfolioImage(int imageId)
+        {
+            var result = await _artisanService.DeleteImageFromPortfolioAsync(imageId);
+
+            if (result) return Ok(new { message = "تم حذف الصورة بنجاح" });
+
+            return NotFound("الصورة غير موجودة أو تم حذفها بالفعل");
+        }
+        //.
+    }
+
+
 } 

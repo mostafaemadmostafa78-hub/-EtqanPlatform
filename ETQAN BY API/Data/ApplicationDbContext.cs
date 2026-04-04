@@ -11,6 +11,9 @@ namespace ETQAN.API.Data
         // ===== DbSets =====
         public DbSet<Client> Clients { get; set; }
         public DbSet<Artisan> Artisans { get; set; }
+       //ah
+       public DbSet<ArtisanPortfolio> ArtisanPortfolios { get; set; }
+        //.
         public DbSet<Company> Companies { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
@@ -77,6 +80,14 @@ namespace ETQAN.API.Data
                 .WithOne(c => c.User)
                 .HasForeignKey<Company>(c => c.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            //ah
+            modelBuilder.Entity<ArtisanPortfolio>()
+                 .HasOne(p => p.Artisan)
+                 .WithMany(a => a.Portfolio) 
+                 .HasForeignKey(p => p.ArtisanId)
+                 .OnDelete(DeleteBehavior.Cascade); 
+            //.
 
             // ===== Reviews: Prevent Multiple Cascade Paths =====
             modelBuilder.Entity<Review>()

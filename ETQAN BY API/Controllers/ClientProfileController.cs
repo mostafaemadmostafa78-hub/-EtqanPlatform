@@ -1,27 +1,32 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ETQAN.API.Data;
+using ETQAN.API.Models;
+using ETQAN_BY_API.DTO;
+using ETQAN_BY_API.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using ETQAN.API.Data;
-using ETQAN_BY_API.DTO;
-using Microsoft.AspNetCore.Identity;
-using ETQAN.API.Models;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "Client")] // مسموح للعملاء فقط
+[Authorize(Roles = "Client")]
 public class ClientProfileController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IClientService _clientService;
 
-    public ClientProfileController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public ClientProfileController(
+        ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        IClientService clientService)
     {
         _context = context;
         _userManager = userManager;
+        _clientService = clientService;
     }
 
-    // 1. جلب بيانات البروفايل الأساسية
     [HttpGet("info")]
     public async Task<IActionResult> GetProfileInfo()
     {
@@ -40,13 +45,11 @@ public class ClientProfileController : ControllerBase
         });
     }
 
-    // 2. جلب سجل الطلبات (History)
     [HttpGet("history")]
     public async Task<IActionResult> GetHistory()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        // جلب الطلبات اللي العميل ده عملها مع بيانات الحرفي ووظيفته
         var history = await _context.ServiceRequests
             .Include(r => r.Artisan).ThenInclude(a => a.User)
             .Include(r => r.Artisan).ThenInclude(a => a.Job)
@@ -64,7 +67,6 @@ public class ClientProfileController : ControllerBase
         return Ok(history);
     }
 
-    // 3. جلب التقييمات التي كتبها العميل
     [HttpGet("my-reviews")]
     public async Task<IActionResult> GetMyReviews()
     {
@@ -82,13 +84,13 @@ public class ClientProfileController : ControllerBase
                 ArtisanImage = r.Artisan.User.ProfilePicture ?? "/images/default.svg",
                 Rating = r.Rating,
                 Comment = r.Comment,
-                Date = DateTime.Now.ToShortDateString() // يمكنك استخدام تاريخ حقيقي لو موجود بالموديل
+                Date = DateTime.Now.ToShortDateString()
             }).ToListAsync();
 
         return Ok(reviews);
     }
 
-    // 4. تحديث البيانات الشخصية
+    
     [HttpPut("update")]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
     {
@@ -101,7 +103,6 @@ public class ClientProfileController : ControllerBase
         user.PhoneNumber = dto.PhoneNumber;
         user.Governorate = dto.Governorate;
 
-        // تحديث كلمة السر لو اتبعتت
         if (!string.IsNullOrEmpty(dto.NewPassword))
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -113,4 +114,16 @@ public class ClientProfileController : ControllerBase
 
         return BadRequest(result.Errors);
     }
+
+//ah
+    [HttpDelete("delete-my-account")]
+    public async Task<IActionResult> DeleteAccount()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var result = await _clientService.DeleteClientAccountAsync(userId);
+
+        if (result) return Ok(new { message = "تم حذف الحساب بنجاح" });
+        return BadRequest("فشل حذف الحساب");
+    }
+    //.
 }
