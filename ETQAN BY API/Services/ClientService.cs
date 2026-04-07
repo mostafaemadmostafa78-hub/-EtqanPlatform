@@ -1,6 +1,9 @@
-﻿using ETQAN.API.Data;
-using Microsoft.EntityFrameworkCore;
+﻿//ah
+using ETQAN.API.Data;
 using ETQAN_BY_API.DTO;
+using ETQAN_BY_API.Model.DTOs;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace ETQAN_BY_API.Services
 {
@@ -23,5 +26,28 @@ namespace ETQAN_BY_API.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+       // تعديل التقييم
+        public async Task<bool> UpdateReviewAsync(int reviewId, string clientId, UpdateReviewDto dto)
+        {
+            var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId && r.ReviewerId == clientId);
+            if (review == null) return false;
+
+            review.Rating = dto.Rating;
+            review.Comment = dto.Comment;
+
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        //حذف التقييم
+        public async Task<bool> DeleteReviewAsync(int reviewId, string clientId)
+        {
+            var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId && r.ReviewerId == clientId);
+            if (review == null) return false;
+
+            _context.Reviews.Remove(review);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        //.
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ETQAN.API.Data;
 using ETQAN.API.Models;
 using ETQAN_BY_API.DTO;
+using ETQAN_BY_API.Model.DTOs;
 using ETQAN_BY_API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -124,6 +125,29 @@ public class ClientProfileController : ControllerBase
 
         if (result) return Ok(new { message = "تم حذف الحساب بنجاح" });
         return BadRequest("فشل حذف الحساب");
+    }
+    //.
+
+    //ah - تعديل تقييم العميل لعمله السابق
+    [HttpPut("review/{reviewId}")]
+    public async Task<IActionResult> UpdateReview(int reviewId, UpdateReviewDto dto)
+    {
+        var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var result = await _clientService.UpdateReviewAsync(reviewId, clientId, dto);
+
+        if (!result) return BadRequest("تعذر تعديل التقييم أو التقييم غير موجود");
+        return Ok("تم تحديث التقييم بنجاح");
+    }
+
+    //ah - حذف تقييم
+    [HttpDelete("review/{reviewId}")]
+    public async Task<IActionResult> DeleteReview(int reviewId)
+    {
+        var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var result = await _clientService.DeleteReviewAsync(reviewId, clientId);
+
+        if (!result) return BadRequest("تعذر حذف التقييم");
+        return Ok("تم حذف التقييم بنجاح");
     }
     //.
 }

@@ -16,11 +16,14 @@ namespace ETQAN_BY_API.Services
         {
             if (file == null) return null;
 
-            // تحديد مكان الحفظ (wwwroot/images/portfolio)
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "images", folderName);
-            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+            // استخدام ContentRootPath بيخلي الكود يدور من "قلب" المشروع نفسه
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", folderName);
 
-            // اسم فريد للصورة
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             var filePath = Path.Combine(uploadsFolder, fileName);
 
