@@ -1,4 +1,5 @@
-﻿using ETQAN.API.Data;
+﻿//ah
+using ETQAN.API.Data;
 using ETQAN_BY_API.DTO;
 using ETQAN_BY_API.Model;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +61,7 @@ namespace ETQAN_BY_API.Services
             return true;
         }
 
-        // ضفت لك دي عشان الـ Interface ميزعلش (دالة الحذف)
+       
         public async Task<bool> DeleteImageFromPortfolioAsync(int imageId)
         {
             var image = await _context.ArtisanPortfolios.FindAsync(imageId);
@@ -76,3 +77,4 @@ namespace ETQAN_BY_API.Services
         }
     }
 }
+//.
