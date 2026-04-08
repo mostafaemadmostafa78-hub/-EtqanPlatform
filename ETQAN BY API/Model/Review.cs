@@ -19,5 +19,8 @@ namespace ETQAN.API.Models
         [Required]
         public int ArtisanId { get; set; }
         public Artisan Artisan { get; set; }
+        //ah
+        public DateTime CreatedAt { get; set; } = DateTime.Now; // تاريخ كتابة التقييم
+        //.            
     }
 }

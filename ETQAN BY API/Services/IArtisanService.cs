@@ -21,8 +21,13 @@ namespace ETQAN_BY_API.Services
         Task<bool> DeleteImageFromPortfolioAsync(int imageId);
 
         // 5. إدارة الطلبات
-        Task<IEnumerable<ArtisanOrderDto>> GetMyOrdersAsync(string artisanId);
+
+        Task<List<ArtisanOrderDto>> GetArtisanOrdersAsync(string artisanId, string? status = null);
+
         Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
+
+        Task<bool> AddOrUpdateReviewAsync(string clientId, UpdateReviewDto dto);
+       
     }
 }
 //.

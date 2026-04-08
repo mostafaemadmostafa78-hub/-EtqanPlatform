@@ -45,78 +45,95 @@ public class ClientProfileController : ControllerBase
             ProfilePicture = user.ProfilePicture ?? "/images/Artisans/default.svg"
         });
     }
+    //mo
+    //[HttpGet("history")]
+    //public async Task<IActionResult> GetHistory()
+    //{
+    //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    [HttpGet("history")]
-    public async Task<IActionResult> GetHistory()
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    //    var history = await _context.ServiceRequests
+    //        .Include(r => r.Artisan).ThenInclude(a => a.User)
+    //        .Include(r => r.Artisan).ThenInclude(a => a.Job)
+    //        .Where(r => r.Client.ApplicationUserId == userId)
+    //        .OrderByDescending(r => r.RequestDate)
+    //        .Select(r => new ClientHistoryDto
+    //        {
+    //            RequestId = r.Id,
+    //            ArtisanName = r.Artisan != null ? r.Artisan.User.FullName : "جاري البحث..",
+    //            JobName = r.Artisan != null ? r.Artisan.Job.Name : r.ServiceName,
+    //            ArtisanImage = r.Artisan != null ? (r.Artisan.User.ProfilePicture ?? "/images/default.svg") : "/images/default.svg",
+    //            Status = r.Status.ToString()
+    //        }).ToListAsync();
 
-        var history = await _context.ServiceRequests
-            .Include(r => r.Artisan).ThenInclude(a => a.User)
-            .Include(r => r.Artisan).ThenInclude(a => a.Job)
-            .Where(r => r.Client.ApplicationUserId == userId)
-            .OrderByDescending(r => r.RequestDate)
-            .Select(r => new ClientHistoryDto
-            {
-                RequestId = r.Id,
-                ArtisanName = r.Artisan != null ? r.Artisan.User.FullName : "جاري البحث..",
-                JobName = r.Artisan != null ? r.Artisan.Job.Name : r.ServiceName,
-                ArtisanImage = r.Artisan != null ? (r.Artisan.User.ProfilePicture ?? "/images/default.svg") : "/images/default.svg",
-                Status = r.Status.ToString()
-            }).ToListAsync();
+    //    return Ok(history);
+    //}
 
-        return Ok(history);
-    }
+    //mo
+    //[HttpGet("my-reviews")]
+    //public async Task<IActionResult> GetMyReviews()
+    //{
+    //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    [HttpGet("my-reviews")]
-    public async Task<IActionResult> GetMyReviews()
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    //    var reviews = await _context.Reviews
+    //        .Include(r => r.Artisan).ThenInclude(a => a.User)
+    //        .Include(r => r.Artisan).ThenInclude(a => a.Job)
+    //        .Where(r => r.ReviewerId == userId)
+    //        .Select(r => new ClientReviewDto
+    //        {
+    //            ReviewId = r.Id,
+    //            ArtisanName = r.Artisan.User.FullName,
+    //            ArtisanJob = r.Artisan.Job.Name,
+    //            ArtisanImage = r.Artisan.User.ProfilePicture ?? "/images/default.svg",
+    //            Rating = r.Rating,
+    //            Comment = r.Comment,
+    //            Date = DateTime.Now.ToShortDateString()
+    //        }).ToListAsync();
 
-        var reviews = await _context.Reviews
-            .Include(r => r.Artisan).ThenInclude(a => a.User)
-            .Include(r => r.Artisan).ThenInclude(a => a.Job)
-            .Where(r => r.ReviewerId == userId)
-            .Select(r => new ClientReviewDto
-            {
-                ReviewId = r.Id,
-                ArtisanName = r.Artisan.User.FullName,
-                ArtisanJob = r.Artisan.Job.Name,
-                ArtisanImage = r.Artisan.User.ProfilePicture ?? "/images/default.svg",
-                Rating = r.Rating,
-                Comment = r.Comment,
-                Date = DateTime.Now.ToShortDateString()
-            }).ToListAsync();
+    //    return Ok(reviews);
+    //}
 
-        return Ok(reviews);
-    }
 
-    
+    //mo  //[HttpPut("update")]
+    //public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
+    //{
+    //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    //    var user = await _userManager.FindByIdAsync(userId);
+
+    //    if (user == null) return NotFound();
+
+    //    user.Email = dto.Email;
+    //    user.PhoneNumber = dto.PhoneNumber;
+    //    user.Governorate = dto.Governorate;
+
+    //    if (!string.IsNullOrEmpty(dto.NewPassword))
+    //    {
+    //        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+    //        await _userManager.ResetPasswordAsync(user, token, dto.NewPassword);
+    //    }
+
+    //    var result = await _userManager.UpdateAsync(user);
+    //    if (result.Succeeded) return Ok(new { message = "تم تحديث البيانات بنجاح" });
+
+    //    return BadRequest(result.Errors);
+    //}
+
+    //ah
     [HttpPut("update")]
+    [Authorize(Roles = "Client")]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId);
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        if (user == null) return NotFound();
+        var result = await _clientService.UpdateProfileAsync(userId, dto);
 
-        user.Email = dto.Email;
-        user.PhoneNumber = dto.PhoneNumber;
-        user.Governorate = dto.Governorate;
+        if (result)
+            return Ok(new { message = "تم تحديث البيانات بنجاح" });
 
-        if (!string.IsNullOrEmpty(dto.NewPassword))
-        {
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            await _userManager.ResetPasswordAsync(user, token, dto.NewPassword);
-        }
-
-        var result = await _userManager.UpdateAsync(user);
-        if (result.Succeeded) return Ok(new { message = "تم تحديث البيانات بنجاح" });
-
-        return BadRequest(result.Errors);
+        return BadRequest(new { message = "فشل تحديث البيانات" });
     }
 
-//ah
+    //ah
     [HttpDelete("delete-my-account")]
     public async Task<IActionResult> DeleteAccount()
     {
@@ -150,4 +167,22 @@ public class ClientProfileController : ControllerBase
         return Ok("تم حذف التقييم بنجاح");
     }
     //.
+    //ah
+    [HttpGet("history")]
+    public async Task<IActionResult> GetHistory([FromQuery] string? status = null)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var history = await _clientService.GetClientHistoryAsync(userId, status);
+        return Ok(history);
+    }
+    //.
+
+    [HttpGet("my-reviews")]
+    [Authorize(Roles = "Client")]
+    public async Task<IActionResult> GetMyReviews()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var reviews = await _clientService.GetMyReviewsAsync(userId);
+        return Ok(reviews);
+    }
 }

@@ -96,11 +96,11 @@ namespace ETQAN.API.Data
                 .HasForeignKey(r => r.ReviewerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<Review>()
-            //    .HasOne(r => r.Artisan)
-            //    .WithMany(a => a.Reviews)
-            //    .HasForeignKey(r => r.ArtisanId)
-            //    .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Artisan)
+                .WithMany(a => a.Reviews)
+                .HasForeignKey(r => r.ArtisanId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // ===== ServiceRequest Relationships =====
             modelBuilder.Entity<ServiceRequest>()
@@ -139,6 +139,11 @@ namespace ETQAN.API.Data
             modelBuilder.Entity<OrderItem>()
                 .Property(oi => oi.UnitPrice)
                 .HasPrecision(18, 2);
+            //ah
+            modelBuilder.Entity<Artisan>()
+                 .Property(a => a.StartingPrice)
+                 .HasPrecision(18, 2);
+            //.
         }
     }
 }

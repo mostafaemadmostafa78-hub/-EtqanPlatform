@@ -15,9 +15,11 @@
     {
         public int RequestId { get; set; }
         public string ArtisanName { get; set; }
+        public string ArtisanPhone { get; set; }
         public string JobName { get; set; }
         public string ArtisanImage { get; set; }
         public string Status { get; set; }
+        public int StatusId { get; set; }
     }
 
     // التقييمات التي كتبها العميل

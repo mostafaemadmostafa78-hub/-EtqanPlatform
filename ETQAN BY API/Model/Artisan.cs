@@ -47,8 +47,12 @@ public class Artisan
 
     public bool IsEmergencyAvailable { get; set; } // متاح للطوارئ؟
 
-    // علاقة مع معرض الأعمال (الصور)
+    [StringLength(255)]
+    public string? CoverPicture { get; set; }
 
+    // علاقة مع معرض الأعمال
     public ICollection<ArtisanPortfolio> Portfolio { get; set; } = new List<ArtisanPortfolio>();
-        //.
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
+    
+    //.
 }

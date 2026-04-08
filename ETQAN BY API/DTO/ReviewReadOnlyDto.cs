@@ -21,5 +21,7 @@ namespace ETQAN_BY_API.DTO
         public string Comment { get; set; }
         public string ReviewerId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string ArtisanName { get; set; } //ah
+        public string ArtisanImage { get; set; } //ah
     }
 }

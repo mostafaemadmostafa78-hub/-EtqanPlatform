@@ -18,6 +18,7 @@
         public int ExperienceYears { get; set; }
         public decimal StartingPrice { get; set; }
         public string ProfilePicture { get; set; }
+        public string? CoverPicture { get; set; }
         public string Governorate { get; set; }
         public double Rating { get; set; }
         public string? WorkHours { get; set; }       // مواعيد العمل
@@ -25,6 +26,7 @@
         public string? ResponseTime { get; set; }    // سرعة الاستجابة
         public bool IsEmergencyAvailable { get; set; } // خدمة الطوارئ
         public int CompletedOrdersCount { get; set; }
+        public DateTime JoinedDate { get; set; }
 
         // قائمة صور معرض الأعمال
         public List<string> PortfolioImages { get; set; }
