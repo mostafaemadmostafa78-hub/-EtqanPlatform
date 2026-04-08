@@ -98,6 +98,7 @@ builder.Services.AddScoped<IArtisanService, ArtisanService>();
 //العميل
 builder.Services.AddScoped<IClientService, ClientService>();
 
+
 builder.Services.AddScoped<IFileService, FileService>();
 //.
 var app = builder.Build();

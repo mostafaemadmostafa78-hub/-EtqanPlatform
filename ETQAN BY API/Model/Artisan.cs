@@ -25,7 +25,7 @@ public class Artisan
     [Required]
     public string ApplicationUserId { get; set; }
     public ApplicationUser User { get; set; }
-
+    //ah
     // ---الإضافات الجديدة  ---
     [Range(0, 100000)]
     public decimal StartingPrice { get; set; } // سعر الخدمة بيبدأ من كام؟
@@ -35,9 +35,20 @@ public class Artisan
     [StringLength(500)]
     public string? Bio { get; set; } // نبذة تعريفية عن الحرفي
 
+    [StringLength(100)]
+    public string? WorkHours { get; set; } // مواعيد العمل
+    public string? Services { get; set; } // الخدمات
+
+    [StringLength(200)]
+    public string? ServiceArea { get; set; } // نطاق الخدمة (المنطقة)
+
+    [StringLength(50)]
+    public string? ResponseTime { get; set; } // سرعة الاستجابة
+
+    public bool IsEmergencyAvailable { get; set; } // متاح للطوارئ؟
+
     // علاقة مع معرض الأعمال (الصور)
 
- //ah 
-        public ICollection<ArtisanPortfolio> Portfolio { get; set; } = new List<ArtisanPortfolio>();
+    public ICollection<ArtisanPortfolio> Portfolio { get; set; } = new List<ArtisanPortfolio>();
         //.
 }

@@ -1,16 +1,28 @@
-﻿using ETQAN_BY_API.DTO;
-using Microsoft.AspNetCore.Http; 
+﻿//ah
+using ETQAN_BY_API.DTO;
+using ETQAN_BY_API.Model.DTOs;
+using Microsoft.AspNetCore.Http;
+
 namespace ETQAN_BY_API.Services
 {
     public interface IArtisanService
     {
-        // تحديث بيانات الحرفي
-        Task<bool> UpdateArtisanAsync(string userId, ArtisanDetailsDto dto);
+        // 1. تحديث البروفايل (الـ 12 خانة - الـ DTO الجديد)
+        Task<bool> UpdateArtisanProfileAsync(string userId, UpdateArtisanProfileDto dto);
 
-        // حذف الحرفي (مسح من جدول الحرفيين واليوزرز)
+        // 2. عرض تفاصيل الحرفي
+        Task<ArtisanDetailsDto> GetArtisanDetailsAsync(string userId);
+
+        // 3. حذف الحرفي
         Task<bool> DeleteArtisanAsync(string userId);
 
+        // 4. معرض الأعمال
         Task<bool> AddImageToPortfolioAsync(string userId, AddPortfolioImageDto dto);
         Task<bool> DeleteImageFromPortfolioAsync(int imageId);
+
+        // 5. إدارة الطلبات
+        Task<IEnumerable<ArtisanOrderDto>> GetMyOrdersAsync(string artisanId);
+        Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
     }
 }
+//.

@@ -1,5 +1,6 @@
 ﻿using ETQAN.API.Data;
 using ETQAN_BY_API.DTO;
+using ETQAN_BY_API.Model.DTOs;
 using ETQAN_BY_API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,29 +9,22 @@ using System.Security.Claims;
 
 namespace ETQAN_BY_API.Controllers
 {
-
-
     [Route("api/[controller]")]
     [ApiController]
     public class ArtisansController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         //ah
-        private readonly IArtisanService _artisanService; 
+        private readonly IArtisanService _artisanService;
 
-        
         public ArtisansController(ApplicationDbContext context, IArtisanService artisanService)
         {
             _context = context;
             _artisanService = artisanService; // هنا بنربط الخدمة
         }
         //.
- 
 
-        
         [HttpGet]
-       // [Authorize(Roles = "Client,Admin")]
-
         public async Task<IActionResult> GetAll([FromQuery] string? search)
         {
             var query = _context.Artisans.Include(a => a.User).Include(a => a.Job).AsQueryable();
@@ -46,33 +40,30 @@ namespace ETQAN_BY_API.Controllers
                 Name = a.User.FullName,
                 JobName = a.Job.Name,
                 Price = a.StartingPrice,
-                Rating = 4.8, // قيمة مؤقتة
+                Rating = 4.8,
                 ImageUrl = a.User.ProfilePicture ?? "/images/Artisans/default.svg"
             }).ToListAsync();
 
             return Ok(result);
-
         }
+
         [HttpGet("{id}")]
-        [Authorize] // مسموح لأي يوزر مسجل (عميل، شركة، إلخ) يشوف البروفايل
+        [Authorize]
         public async Task<IActionResult> GetById(string id)
         {
             try
             {
-                // 1. جلب الحرفي بكل بياناته المرتبطة (اليوزر، الوظيفة، ومعرض الصور)
                 var artisan = await _context.Artisans
                     .Include(a => a.User)
                     .Include(a => a.Job)
                     .Include(a => a.Portfolio)
                     .FirstOrDefaultAsync(a => a.ApplicationUserId == id);
 
-                // 2. التحقق من وجود الحرفي
                 if (artisan == null)
                 {
                     return NotFound(new { message = "هذا الحرفي غير موجود" });
                 }
 
-                // 3. تحويل البيانات إلى DTO (Mapping)
                 var result = new ArtisanDetailsDto
                 {
                     Id = artisan.ApplicationUserId,
@@ -82,10 +73,8 @@ namespace ETQAN_BY_API.Controllers
                     ExperienceYears = artisan.ExperienceYears,
                     StartingPrice = artisan.StartingPrice,
                     Governorate = artisan.User.Governorate ?? "غير محددة",
-                    Rating = 4.8, // قيمة افتراضية حالياً حتى نبرمج جدول التقييمات
+                    Rating = 4.8,
                     ProfilePicture = artisan.User.ProfilePicture ?? "/images/Artisans/default.svg",
-
-                    // تحويل قائمة الصور من جدول Portfolio لمجرد قائمة نصوص (URLs)
                     PortfolioImages = artisan.Portfolio != null
                         ? artisan.Portfolio.Select(p => p.ImageUrl).ToList()
                         : new List<string>()
@@ -95,19 +84,26 @@ namespace ETQAN_BY_API.Controllers
             }
             catch (Exception ex)
             {
-                // تسجيل الخطأ (Logger) للرجوع إليه
                 return StatusCode(500, new { message = "حدث خطأ أثناء جلب بيانات البروفايل", error = ex.Message });
             }
         }
+
         //ah
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateArtisan(string id, [FromBody] ArtisanDetailsDto dto)
+        [HttpPut("update-profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateArtisanProfile([FromBody] UpdateArtisanProfileDto dto)
         {
-            var result = await _artisanService.UpdateArtisanAsync(id, dto);
-            if (!result) return NotFound("الحرفي غير موجود");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return Ok(new { message = "تم تحديث البيانات بنجاح" });
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "يجب تسجيل الدخول أولاً" });
+
+            var result = await _artisanService.UpdateArtisanProfileAsync(userId, dto);
+
+            if (!result)
+                return BadRequest(new { message = "حدث خطأ أثناء تحديث البيانات" });
+
+            return Ok(new { message = "تم تحديث الملف الشخصي بنجاح" });
         }
 
         [HttpDelete("{id}")]
@@ -119,11 +115,10 @@ namespace ETQAN_BY_API.Controllers
             return Ok(new { message = "تم حذف الحساب بنجاح" });
         }
 
-        // [Authorize(Roles = "Artisan")] // فكي التعليق ده لو عايزة الحرفيين بس اللي يرفعوا
         [HttpPost("portfolio/add")]
+        [Authorize]
         public async Task<IActionResult> AddPortfolioImage([FromForm] AddPortfolioImageDto dto)
         {
-            // سحب الـ ID بتاع الحرفي من الـ Token
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (dto.Image == null) return BadRequest("يرجى اختيار صورة أولاً");
@@ -135,8 +130,8 @@ namespace ETQAN_BY_API.Controllers
             return BadRequest("حدث خطأ أثناء رفع الصورة");
         }
 
-        // [Authorize(Roles = "Artisan")]
         [HttpDelete("portfolio/delete/{imageId}")]
+        [Authorize]
         public async Task<IActionResult> DeletePortfolioImage(int imageId)
         {
             var result = await _artisanService.DeleteImageFromPortfolioAsync(imageId);
@@ -145,8 +140,29 @@ namespace ETQAN_BY_API.Controllers
 
             return NotFound("الصورة غير موجودة أو تم حذفها بالفعل");
         }
+
+        [HttpGet("my-orders")]
+        [Authorize(Roles = "Artisan")]
+        public async Task<IActionResult> GetMyOrders()
+        {
+            var artisanId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (artisanId == null) return Unauthorized();
+
+            var orders = await _artisanService.GetMyOrdersAsync(artisanId);
+            return Ok(orders);
+        }
+
+        [HttpPut("orders/{orderId}/status")]
+        [Authorize(Roles = "Artisan")]
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromQuery] string newStatus)
+        {
+            var result = await _artisanService.UpdateOrderStatusAsync(orderId, newStatus);
+
+            if (result)
+                return Ok(new { message = $"تم تحديث حالة الطلب إلى {newStatus} بنجاح" });
+
+            return BadRequest("فشل تحديث الحالة");
+        }
         //.
     }
-
-
-} 
+}
