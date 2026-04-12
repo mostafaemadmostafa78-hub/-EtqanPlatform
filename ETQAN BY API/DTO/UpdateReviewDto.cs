@@ -15,6 +15,7 @@ namespace ETQAN_BY_API.Model.DTOs
         [Required(ErrorMessage = "برجاء كتابة رأيك")]
         [StringLength(500, MinimumLength = 3, ErrorMessage = "التعليق يجب أن يكون بين 3 و 500 حرف")]
         public string Comment { get; set; }
+        public int OrderId { get; set; }
     }
 
 }    

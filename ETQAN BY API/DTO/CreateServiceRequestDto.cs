@@ -13,5 +13,7 @@ namespace ETQAN_BY_API.DTO
 
         [Required]
         public int ClientId { get; set; }
+        [Required]
+        public int ArtisanId { get; set; }
     }
 }

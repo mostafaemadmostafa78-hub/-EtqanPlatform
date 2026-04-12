@@ -13,6 +13,7 @@ namespace ETQAN.API.Data
         public DbSet<Artisan> Artisans { get; set; }
        //ah
        public DbSet<ArtisanPortfolio> ArtisanPortfolios { get; set; }
+       public DbSet<ContactMessage> ContactMessages { get; set; }
         //.
         public DbSet<Company> Companies { get; set; }
         public DbSet<Job> Jobs { get; set; }

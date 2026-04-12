@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ETQAN.API.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace ETQAN.API.Models
 {
@@ -13,7 +14,16 @@ namespace ETQAN.API.Models
         [Required]
         public string ApplicationUserId { get; set; }
         public ApplicationUser User { get; set; }
+        //ah
+        public bool IsServiceOrder { get; set; } // تمييز النوع :خدمة/متجر
+        public int? ArtisanId { get; set; } // الحرفي المسؤول
+        public Artisan? Artisan { get; set; } // علاقة لجلب بيانات الحرفي
 
+        public int? ServiceRequestId { get; set; } // رابط للطلب الأصلي عشان م نكررش الوصف
+        public ServiceRequest? ServiceRequest { get; set; }
+        [Required]
+        public PaymentMethod PaymentMethod { get; set; }
+        //.
         public ICollection<OrderItem>? OrderItems { get; set; }
     }
 }

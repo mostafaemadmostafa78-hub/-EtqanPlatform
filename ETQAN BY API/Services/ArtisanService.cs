@@ -1,10 +1,10 @@
-﻿//ah
-using ETQAN.API.Data;
+﻿using ETQAN.API.Data;
 using ETQAN.API.Models;
 using ETQAN.API.Models.Enums;
 using ETQAN_BY_API.DTO;
 using ETQAN_BY_API.Model;
 using ETQAN_BY_API.Model.DTOs;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ETQAN_BY_API.Services
@@ -13,11 +13,13 @@ namespace ETQAN_BY_API.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IFileService _fileService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ArtisanService(ApplicationDbContext context, IFileService fileService)
+        public ArtisanService(ApplicationDbContext context, IFileService fileService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _fileService = fileService;
+            _userManager = userManager;
         }
 
         // 1. عرض تفاصيل الحرفي
@@ -47,14 +49,14 @@ namespace ETQAN_BY_API.Services
                 ResponseTime = artisan.ResponseTime,
                 IsEmergencyAvailable = artisan.IsEmergencyAvailable,
                 PortfolioImages = artisan.Portfolio.Select(p => p.ImageUrl).ToList(),
-                Rating = artisan.Reviews.Any() ? (double)artisan.Reviews.Average(r => r.Rating) : 0,
+                Rating = artisan.Reviews.Any() ? (double)Math.Round((decimal)artisan.Reviews.Average(r => r.Rating), 1) : 0,
                 JoinedDate = artisan.User.CreatedAt,
                 CompletedOrdersCount = artisan.Reviews.Count(),
                 Governorate = $"{artisan.User.Governorate} - {artisan.ServiceArea}"
             };
         }
 
-        // 2. تحديث بيانات الحرفي
+        // 2. التحديث الشامل لبيانات الحرفي
         public async Task<bool> UpdateArtisanProfileAsync(string userId, UpdateArtisanProfileDto dto)
         {
             var artisan = await _context.Artisans
@@ -63,9 +65,15 @@ namespace ETQAN_BY_API.Services
 
             if (artisan == null) return false;
 
+            // تحديث بيانات المستخدم الأساسية
+            artisan.User.FullName = dto.FullName;
             artisan.User.Email = dto.Email;
             artisan.User.PhoneNumber = dto.PhoneNumber;
             artisan.User.Governorate = dto.Governorate;
+
+            // تحديث بيانات الحرفي المهنية والشخصية
+            artisan.Age = dto.Age;
+            artisan.MaritalStatus = (MaritalStatus)dto.MaritalStatus;
             artisan.Bio = dto.Bio;
             artisan.ExperienceYears = dto.ExperienceYears;
             artisan.StartingPrice = dto.StartingPrice;
@@ -74,9 +82,21 @@ namespace ETQAN_BY_API.Services
             artisan.ResponseTime = dto.ResponseTime;
             artisan.IsEmergencyAvailable = dto.IsEmergencyAvailable;
 
-            if (dto.Services != null && dto.Services.Any())
+            // تحديث الخدمات
+            artisan.Services = string.Join(", ", dto.Services);
+
+            // منطق تغيير كلمة السر
+            if (!string.IsNullOrEmpty(dto.CurrentPassword) && !string.IsNullOrEmpty(dto.NewPassword))
             {
-                artisan.Services = string.Join(", ", dto.Services);
+                if (dto.NewPassword != dto.ConfirmPassword)
+                    throw new Exception("كلمة السر الجديدة غير مطابقة للتأكيد");
+
+                var passwordResult = await _userManager.ChangePasswordAsync(artisan.User, dto.CurrentPassword, dto.NewPassword);
+                if (!passwordResult.Succeeded)
+                {
+                    var errors = string.Join(", ", passwordResult.Errors.Select(e => e.Description));
+                    throw new Exception($"خطأ في تغيير كلمة السر: {errors}");
+                }
             }
 
             return await _context.SaveChangesAsync() > 0;
@@ -102,17 +122,19 @@ namespace ETQAN_BY_API.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-        // 4. عرض طلبات الحرفي  
+        // 4. عرض طلبات الحرفي
         public async Task<List<ArtisanOrderDto>> GetArtisanOrdersAsync(string artisanId, string? status = null)
         {
             var query = _context.ServiceRequests
                 .Include(r => r.Client).ThenInclude(c => c.User)
                 .Where(r => r.Artisan.ApplicationUserId == artisanId);
 
-            // الفلترة بناءً على الحالة
             if (!string.IsNullOrEmpty(status) && status != "الكل")
             {
-                query = query.Where(r => r.Status.ToString() == status);
+                if (Enum.TryParse<RequestStatus>(status, true, out var statusEnum))
+                {
+                    query = query.Where(r => r.Status == statusEnum);
+                }
             }
 
             return await query
@@ -167,15 +189,18 @@ namespace ETQAN_BY_API.Services
         // 8. إضافة أو تحديث تقييم
         public async Task<bool> AddOrUpdateReviewAsync(string clientId, UpdateReviewDto dto)
         {
-            var artisanExists = await _context.Artisans.AnyAsync(a => a.Id == dto.ArtisanId);
-            if (!artisanExists) return false;
+            int cId = int.Parse(clientId);
+            var order = await _context.ServiceRequests
+               .FirstOrDefaultAsync(o => o.Id == dto.OrderId && o.ClientId == int.Parse(clientId));
+
+            if (order == null) return false;
 
             var existingReview = await _context.Reviews
-                .FirstOrDefaultAsync(r => r.ReviewerId == clientId && r.ArtisanId == dto.ArtisanId);
+                .FirstOrDefaultAsync(r => r.OrderId == dto.OrderId);
 
             if (existingReview != null)
             {
-                existingReview.Rating = (decimal)dto.Rating;
+                existingReview.Rating = dto.Rating;
                 existingReview.Comment = dto.Comment;
                 existingReview.CreatedAt = DateTime.Now;
             }
@@ -183,17 +208,33 @@ namespace ETQAN_BY_API.Services
             {
                 var newReview = new Review
                 {
+                    OrderId = dto.OrderId,
+                    ArtisanId = (int)order.ArtisanId,
                     ReviewerId = clientId,
-                    ArtisanId = dto.ArtisanId,
-                    Rating = (decimal)dto.Rating,
+                    Rating = dto.Rating,
                     Comment = dto.Comment,
                     CreatedAt = DateTime.Now
                 };
                 _context.Reviews.Add(newReview);
             }
 
-            return await _context.SaveChangesAsync() > 0;
+            var saved = await _context.SaveChangesAsync() > 0;
+            if (saved) await UpdateArtisanAverageRating((int)order.ArtisanId);
+            return saved;
+        }
+
+        // 9. ميثود تحديث متوسط النجوم
+        private async Task UpdateArtisanAverageRating(int artisanId)
+        {
+            var artisan = await _context.Artisans
+                .Include(a => a.Reviews)
+                .FirstOrDefaultAsync(a => a.Id == artisanId);
+
+            if (artisan != null && artisan.Reviews.Any())
+            {
+                artisan.AverageRating = artisan.Reviews.Average(r => r.Rating);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
-//.

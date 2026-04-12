@@ -117,7 +117,7 @@ namespace ETQAN_BY_API.Controllers
         //ah
         [HttpPut("update-profile")]
         [Authorize]
-        public async Task<IActionResult> UpdateProfile([FromForm] UpdateArtisanProfileDto dto)
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateArtisanProfileDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

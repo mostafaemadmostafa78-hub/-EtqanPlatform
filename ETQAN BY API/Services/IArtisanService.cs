@@ -7,7 +7,7 @@ namespace ETQAN_BY_API.Services
 {
     public interface IArtisanService
     {
-        // 1. تحديث البروفايل (الـ 12 خانة - الـ DTO الجديد)
+        // 1. تحديث البروفايل   
         Task<bool> UpdateArtisanProfileAsync(string userId, UpdateArtisanProfileDto dto);
 
         // 2. عرض تفاصيل الحرفي
@@ -27,6 +27,7 @@ namespace ETQAN_BY_API.Services
         Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
 
         Task<bool> AddOrUpdateReviewAsync(string clientId, UpdateReviewDto dto);
+
        
     }
 }

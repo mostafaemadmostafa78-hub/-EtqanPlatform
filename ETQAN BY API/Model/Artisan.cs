@@ -46,6 +46,7 @@ public class Artisan
     public string? ResponseTime { get; set; } // سرعة الاستجابة
 
     public bool IsEmergencyAvailable { get; set; } // متاح للطوارئ؟
+    public decimal AverageRating { get; set; } = 0;
 
     [StringLength(255)]
     public string? CoverPicture { get; set; }
