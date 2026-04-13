@@ -61,7 +61,7 @@ namespace ETQAN_BY_API.Controllers
             }
 
             // 3. توليد الكود OTP
-            string otp = new Random().Next(100000, 999999).ToString();
+            string otp = new Random().Next(1000, 9999).ToString();
 
             // 4. حفظ البيانات في الكاش (بما فيها مسار الملف)
             var cacheEntry = new CompanyOtpCacheEntry

@@ -1,5 +1,9 @@
+wwwroot\uploads\chats\audio\8d8a9029-6981-407d-a89b-3f642f5ca2f4.m4a
 wwwroot\uploads\commercial_registers\6508492e-1182-4175-9804-ac8cab390478_UnitOFWork.cs
 wwwroot\uploads\commercial_registers\ec7fca2e-5781-437f-96c1-61368e2ac2de_1.webp
+wwwroot\uploads\companies\057fddbb-5de4-4a83-bf34-240c00d87d33.pdf
+wwwroot\uploads\companies\79697e4c-79ff-4631-ab42-d6dca6fddef3.jsx
+wwwroot\uploads\companies\c80004da-defe-4216-afb2-49b8a707c4a2.pdf
 wwwroot\uploads\registers\0c9301dd-88cb-41c9-92ff-dc4e3597309a.pdf
 wwwroot\uploads\registers\0f563eab-b40f-41dc-8058-8f4a66f479b8.pdf
 wwwroot\uploads\registers\334ac16a-194e-4204-9ec5-0108319af7d7.pdf
@@ -10,11 +14,8 @@ wwwroot\uploads\registers\8603ac11-835b-4d78-a268-c9547d967491.pdf
 wwwroot\uploads\registers\9cca61f7-668a-4cc5-8576-bed3cc8532be.pdf
 wwwroot\uploads\registers\aa753a77-d348-4c7b-91e9-fb8ffc1eef97.pdf
 wwwroot\uploads\registers\b747b6a4-e546-4a93-9e7f-7f0552d1cb99.cs
+wwwroot\uploads\registers\c47c7f00-c4a5-44ef-a6cd-1f6448f442cb.pdf
 wwwroot\uploads\registers\ebe101e9-9c99-4b29-8cc9-6a3810c8c974.pdf
 wwwroot\uploads\registers\fe8d8401-085f-480b-86b3-bec17fdd2394.jsx
-wwwroot\uploads\registers\c47c7f00-c4a5-44ef-a6cd-1f6448f442cb.pdf
-wwwroot\uploads\companies\c80004da-defe-4216-afb2-49b8a707c4a2.pdf
-wwwroot\uploads\companies\057fddbb-5de4-4a83-bf34-240c00d87d33.pdf
-wwwroot\uploads\companies\79697e4c-79ff-4631-ab42-d6dca6fddef3.jsx
-C:\Users\mosta\Desktop\ETQAN BY API\ETQAN BY API\wwwroot\uploads\registers\fe8d8401-085f-480b-86b3-bec17fdd2394.jsx
-C:\Users\mosta\Desktop\ETQAN BY API\ETQAN BY API\wwwroot\uploads\companies\79697e4c-79ff-4631-ab42-d6dca6fddef3.jsx
+C:\Users\mosta\Desktop\Etqan api\ETQAN BY API\wwwroot\uploads\companies\79697e4c-79ff-4631-ab42-d6dca6fddef3.jsx
+C:\Users\mosta\Desktop\Etqan api\ETQAN BY API\wwwroot\uploads\registers\fe8d8401-085f-480b-86b3-bec17fdd2394.jsx

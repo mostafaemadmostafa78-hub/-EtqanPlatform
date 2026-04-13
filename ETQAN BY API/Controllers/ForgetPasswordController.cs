@@ -40,7 +40,7 @@ namespace ETQAN_BY_API.Controllers
             }
 
             // ✅ لو موجود: ولد كود وابعته
-            string otp = new Random().Next(100000, 999999).ToString();
+            string otp = new Random().Next(1000, 9999).ToString();
             _cache.Set($"reset_otp_{email.ToLower().Trim()}", otp, TimeSpan.FromMinutes(60));
 
             _emailServices.SendEmail(new EmailDTO
