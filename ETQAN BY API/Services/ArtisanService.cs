@@ -189,9 +189,9 @@ namespace ETQAN_BY_API.Services
         // 8. إضافة أو تحديث تقييم
         public async Task<bool> AddOrUpdateReviewAsync(string clientId, UpdateReviewDto dto)
         {
-            int cId = int.Parse(clientId);
+
             var order = await _context.ServiceRequests
-               .FirstOrDefaultAsync(o => o.Id == dto.OrderId && o.ClientId == int.Parse(clientId));
+                .FirstOrDefaultAsync(o => o.Id == dto.OrderId && o.ClientId.ToString() == clientId);
 
             if (order == null) return false;
 
@@ -210,7 +210,7 @@ namespace ETQAN_BY_API.Services
                 {
                     OrderId = dto.OrderId,
                     ArtisanId = (int)order.ArtisanId,
-                    ReviewerId = clientId,
+                    ReviewerId = clientId, 
                     Rating = dto.Rating,
                     Comment = dto.Comment,
                     CreatedAt = DateTime.Now

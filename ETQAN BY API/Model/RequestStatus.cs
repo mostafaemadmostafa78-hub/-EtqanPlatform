@@ -2,10 +2,10 @@
 {
     public enum RequestStatus
     {
-        Pending,
-        Accepted,
-        OnTheWay,
-        Finished,
-        Cancelled
+        Pending=0,
+        Accepted=1,
+        OnTheWay=2,
+        Finished=3,
+        Cancelled=4
     }
 }
