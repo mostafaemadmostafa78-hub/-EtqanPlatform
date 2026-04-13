@@ -1,6 +1,8 @@
-﻿using ETQAN.API.Data;
+﻿using Etqan.Hubs;
+using ETQAN.API.Data;
 using ETQAN.API.Models;
 using ETQAN.API.Models.Enums;
+using ETQAN_BY_API.Hubs;
 using ETQAN_BY_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -100,6 +102,10 @@ builder.Services.AddScoped<IClientService, ClientService>();
 
 
 builder.Services.AddScoped<IFileService, FileService>();
+
+builder.Services.AddScoped<NotificationService>();
+
+builder.Services.AddSignalR();
 //.
 var app = builder.Build();
 
@@ -166,5 +172,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ChatHub>("/chatHub");
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

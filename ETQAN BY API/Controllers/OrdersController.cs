@@ -17,10 +17,12 @@ namespace ETQAN_BY_API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly NotificationService _notificationService;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context, NotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         [HttpPost]
@@ -264,29 +266,41 @@ namespace ETQAN_BY_API.Controllers
         //.
         //ah
 
-        //   إنشاء طلب خدمة جديدة 
         [HttpPost("create-service-request")]
         public async Task<IActionResult> CreateServiceRequest([FromBody] CreateServiceRequestDto dto)
         {
-            // التأكد إن البيانات صحيحة
             if (dto == null) return BadRequest("بيانات الطلب غير مكتملة");
 
             try
             {
-                // إنشاء كائن الطلب الجديد وتربيطه بالبيانات
                 var newRequest = new ServiceRequest
                 {
                     ServiceName = dto.ServiceName,
                     Description = dto.Description,
-                    ArtisanId = dto.ArtisanId, 
-                    ClientId = dto.ClientId,   // رقم العميل اللي باعت الطلب
+                    ArtisanId = dto.ArtisanId,
+                    ClientId = dto.ClientId,
                     RequestDate = DateTime.Now,
-                    Status = RequestStatus.Pending // الحالة تبدأ بـ "في الانتظار"
+                    Status = RequestStatus.Pending
                 };
 
-                // حفظ في الداتابيز
                 _context.ServiceRequests.Add(newRequest);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); // التأكد من الحفظ أولاً
+
+                
+
+                // 1. هنجيب اسم العميل عشان الحرفي يعرف مين باعتله
+                var client = await _context.Users.FindAsync(dto.ClientId);
+                var clientName = client?.FullName ?? "عميل جديد";
+
+                // 2. نبعت الإشعار للحرفي (ArtisanId)
+                await _notificationService.SendNotificationAsync(
+                    dto.ArtisanId.ToString(),
+                    "طلب جديد! ",
+                    $"قام {clientName} بطلب خدمة: {dto.ServiceName}",
+                    "/orders/details/" + newRequest.Id // رابط تفاصيل الطلب
+                );
+
+                // ------------------------------
 
                 return Ok(new
                 {
@@ -307,10 +321,10 @@ namespace ETQAN_BY_API.Controllers
             var order = await _context.Orders
                 .Include(o => o.User)           // بيانات العميل
                 .Include(o => o.Artisan)        // بيانات الحرفي
-                    .ThenInclude(a => a.User)   // بيانات الحرفي الشخصية (الاسم والموبايل)
+                    .ThenInclude(a => a.User)   // بيانات الحرفي الشخصية الاسم والموباي)
                 .Include(o => o.OrderItems!)    // تفاصيل الجدول (الخدمات أو المعدات)
                     .ThenInclude(oi => oi.Product)
-                .Include(o => o.ServiceRequest) // الطلب الأصلي (لو موجود)
+                .Include(o => o.ServiceRequest) // الطلب الأصلي -لو موجود
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             // 2. التحقق من وجود الفاتورة
@@ -319,7 +333,7 @@ namespace ETQAN_BY_API.Controllers
                 return NotFound(new { message = "عذراً، الفاتورة غير موجودة" });
             }
 
-            // 3.  اللي هيغذي التصميم بناء الكائن 
+            
             var invoiceData = new
             {
                 // الجزء العلوي من التصميم

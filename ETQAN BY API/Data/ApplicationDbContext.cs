@@ -14,6 +14,8 @@ namespace ETQAN.API.Data
        //ah
        public DbSet<ArtisanPortfolio> ArtisanPortfolios { get; set; }
        public DbSet<ContactMessage> ContactMessages { get; set; }
+       public DbSet<ChatMessage> ChatMessages { get; set; }
+       public DbSet<Notification> Notifications { get; set; }
         //.
         public DbSet<Company> Companies { get; set; }
         public DbSet<Job> Jobs { get; set; }

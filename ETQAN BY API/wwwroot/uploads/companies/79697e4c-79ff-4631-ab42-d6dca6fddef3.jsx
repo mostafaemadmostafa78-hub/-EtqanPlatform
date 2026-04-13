@@ -64,7 +64,9 @@ function CraftsmanRegister() {
 
   const filteredJobs = jobsList.filter((j) => j.name.includes(jobSearchTerm));
 
-  const handleUsernameChange = (e) => {
+  const handleUsername
+  
+  = (e) => {
     const val = e.target.value;
     if (/^[a-zA-Z\u0600-\u06FF\s]*$/.test(val)) setUsername(val);
   };
