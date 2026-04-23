@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ETQAN BY API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a2f1233deef45cb0ffd65e2a86261f7b7d49b28c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+38d49f493fd9b0fff9dd53d07878cd6ec79a6dda")]
 [assembly: System.Reflection.AssemblyProductAttribute("ETQAN BY API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ETQAN BY API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
