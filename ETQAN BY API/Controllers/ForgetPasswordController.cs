@@ -1,10 +1,10 @@
 ﻿using ETQAN.API.Models;
 using ETQAN_BY_API.DTO;
 using ETQAN_BY_API.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+
 
 namespace ETQAN_BY_API.Controllers
 {
@@ -50,7 +50,7 @@ namespace ETQAN_BY_API.Controllers
                 Body = $"<h2>كود التحقق الخاص بك هو: {otp}</h2>"
             });
 
-           
+
             return Ok(new { message = "تم إرسال كود التحقق" });
         }
         // 1. لازم يكون عندك الـ DTO ده عشان يستلم الداتا
