@@ -27,8 +27,8 @@ namespace ETQAN.API.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OtpCode> OtpCodes { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-       // public DbSet<MaritalStatus> MaritalStatuses { get; set; }
-
+        // public DbSet<MaritalStatus> MaritalStatuses { get; set; }
+        public DbSet<Brand> Brands { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 

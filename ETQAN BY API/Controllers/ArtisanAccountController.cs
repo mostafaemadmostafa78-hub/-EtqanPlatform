@@ -43,7 +43,7 @@ public class ArtisanAccountController : ControllerBase
             return BadRequest(new { message = "هذا البريد الإلكتروني مسجل بالفعل" });
 
         // توليد الكود وحفظه
-        string otp = new Random().Next(100000, 999999).ToString();
+        string otp = new Random().Next(1000, 9999).ToString();
         var cacheEntry = new OtpCacheEntry { UserData = dto, OtpCode = otp };
 
         // حفظ في الكاش لمدة 15 دقيقة (زودنا الوقت قليلاً)

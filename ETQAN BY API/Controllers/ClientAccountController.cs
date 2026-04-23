@@ -57,7 +57,7 @@ namespace ETQAN_BY_API.Controllers
             }
 
             // 2. توليد OTP مكون من 6 أرقام
-            string otp = new Random().Next(100000, 999999).ToString();
+            string otp = new Random().Next(1000, 9999).ToString();
 
             // 3. حفظ البيانات في الكاش (مفتاح خاص بالعملاء)
             var cacheEntry = new OtpCacheEntry<RegisterClientDto> { UserData = dto, OtpCode = otp };
