@@ -8,8 +8,7 @@ public class Artisan
     public int Id { get; set; }
 
     [Required]
-    [Range(18, 60)]
-    public int Age { get; set; }
+    public string BirthDate { get; set; }      
 
     [Required]
     [StringLength(14)]

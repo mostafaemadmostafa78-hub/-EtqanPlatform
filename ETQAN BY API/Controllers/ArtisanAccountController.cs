@@ -104,7 +104,7 @@ public class ArtisanAccountController : ControllerBase
 
         var artisan = new Artisan
         {
-            Age = dto.Age,
+            BirthDate = dto.BirthDate,
             NationalId = dto.NationalId,
             MaritalStatus = (MaritalStatus)dto.MaritalStatus,
             JobId = dto.JobId,

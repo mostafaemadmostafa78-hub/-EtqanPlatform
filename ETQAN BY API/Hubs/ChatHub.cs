@@ -2,32 +2,42 @@
 using ETQAN_BY_API.Model;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
-using System; 
+using System;
+using System.Text.RegularExpressions;
 
 namespace ETQAN_BY_API.Hubs
 {
+    /// <summary>
+    /// المسؤول عن إدارة المحادثات الفورية والتحقق من سياسات الخصوصية Hub كلاس الـ
+    /// </summary>
     public class ChatHub : Hub
     {
         private readonly ApplicationDbContext _context;
-        private readonly NotificationService _notificationService; // 1. تعريف السيرفر هنا
+        private readonly NotificationService _notificationService;
 
-        // 2. تحديث الكونستركتور عشان يستقبل السيرفر
         public ChatHub(ApplicationDbContext context, NotificationService notificationService)
         {
             _context = context;
             _notificationService = notificationService;
         }
 
-        // ميثود إرسال وحفظ الرسائل النصية
+        #region الرسائل النصية
         public async Task SendMessage(string receiverId, string message)
         {
             var senderId = Context.UserIdentifier;
 
-            // 1. هنجيب بيانات الراسل من جدول المستخدمين عشان ناخد الـ FullName
+            // التحقق من سياسات الخصوصية ومنع تبادل أرقام الهاتف أو البريد الإلكتروني
+            if (ContainsSensitiveData(message))
+            {
+                await Clients.Caller.SendAsync("ErrorMessage", "يمنع تبادل بيانات التواصل الشخصية لضمان سلامة التعاملات.");
+                return;
+            }
+
+            // جلب بيانات مرسل الرسالة لتضمين الاسم في التنبيهات
             var sender = await _context.Users.FindAsync(senderId);
             var senderName = sender?.FullName ?? "مستخدم";
 
-            // 2. حفظ الرسالة في الداتابيز
+            // أرشفة الرسالة في قاعدة البيانات
             var chatMsg = new ChatMessage
             {
                 SenderId = senderId,
@@ -36,28 +46,31 @@ namespace ETQAN_BY_API.Hubs
                 IsImage = false,
                 Timestamp = DateTime.Now
             };
+
             _context.ChatMessages.Add(chatMsg);
             await _context.SaveChangesAsync();
 
-            // 3. إرسال الرسالة للشات
+            // بث الرسالة للمستلم بشكل لحظي
             await Clients.User(receiverId).SendAsync("ReceiveMessage", senderId, message, null);
 
-            // 4. إرسال الإشعار بالاسم الحقيقي
+            // إرسال إشعار دفع وتصنيفه كرسالة محادثة
             await _notificationService.SendNotificationAsync(
                 receiverId,
                 "رسالة جديدة من " + senderName,
-                message.Length > 20 ? message.Substring(0, 20) + "..." : message, // بنعرض أول جزء من الرسالة في الإشعار
+                message.Length > 25 ? message.Substring(0, 25) + "..." : message,
+                "Chat", // نوع الإشعار للفلترة في الفرونت إند
                 "/chat/" + senderId
             );
         }
+        #endregion
 
-        // ميثود إرسال وحفظ الصور
+        #region الوسائط المتعددة (صور - صوت)
         public async Task SendImage(string receiverId, string imageUrl)
         {
             var senderId = Context.UserIdentifier;
-            var senderName = Context.User.Identity.Name ?? "مستخدم";
+            var sender = await _context.Users.FindAsync(senderId);
+            var senderName = sender?.FullName ?? "مستخدم";
 
-            // 1. حفظ في الداتابيز
             var chatMsg = new ChatMessage
             {
                 SenderId = senderId,
@@ -66,26 +79,26 @@ namespace ETQAN_BY_API.Hubs
                 IsImage = true,
                 Timestamp = DateTime.Now
             };
+
             _context.ChatMessages.Add(chatMsg);
             await _context.SaveChangesAsync();
 
-            // 2. إرسال الرابط لحظياً للمستلم
             await Clients.User(receiverId).SendAsync("ReceiveMessage", senderId, null, imageUrl);
 
-            // 3. إرسال إشعار للمستلم إن فيه صورة وصلت
             await _notificationService.SendNotificationAsync(
                 receiverId,
                 "صورة جديدة من " + senderName,
-                "أرسل لك صورة في المحادثة",
+                "أرسل لك صورة توضيحية",
+                "Chat",
                 "/chat/" + senderId
             );
         }
 
-        // ميثود إرسال الريكورد
         public async Task SendAudio(string receiverId, string audioUrl)
         {
             var senderId = Context.UserIdentifier;
-            var senderName = Context.User.Identity.Name ?? "مستخدم";
+            var sender = await _context.Users.FindAsync(senderId);
+            var senderName = sender?.FullName ?? "مستخدم";
 
             var chatMsg = new ChatMessage
             {
@@ -95,6 +108,7 @@ namespace ETQAN_BY_API.Hubs
                 IsAudio = true,
                 Timestamp = DateTime.Now
             };
+
             _context.ChatMessages.Add(chatMsg);
             await _context.SaveChangesAsync();
 
@@ -103,9 +117,25 @@ namespace ETQAN_BY_API.Hubs
             await _notificationService.SendNotificationAsync(
                 receiverId,
                 "رسالة صوتية من " + senderName,
-                "أرسل لك ريكورد في المحادثة",
+                "أرسل لك تسجيلاً صوتياً",
+                "Chat",
                 "/chat/" + senderId
             );
         }
+        #endregion
+
+        #region ميثودز التحقق المساعدة
+        /// <summary>
+        ///Regex فحص النص والتأكد من خلوه من أرقام الهاتف أو الإيميلات باستخدام 
+        /// </summary>
+        private bool ContainsSensitiveData(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return false;
+
+            // نمط للبحث عن الإيميلات وأرقام الهواتف (بين 10 إلى 14 رقم)
+            string pattern = @"(\+?\d{10,14}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})";
+            return Regex.IsMatch(text, pattern);
+        }
+        #endregion
     }
 }

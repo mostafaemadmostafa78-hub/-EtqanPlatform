@@ -1,4 +1,4 @@
-﻿using Etqan.Hubs; 
+﻿using Etqan.Hubs;
 using ETQAN.API.Data;
 using ETQAN_BY_API.Model;
 using Microsoft.AspNetCore.SignalR;
@@ -14,14 +14,16 @@ public class NotificationService
         _hubContext = hubContext;
     }
 
-    public async Task SendNotificationAsync(string userId, string title, string message, string? actionUrl = null)
+    // ميثود لإرسال الإشعار وحفظه مع تحديد نوعه
+    public async Task SendNotificationAsync(string userId, string title, string message, string type, string? actionUrl = null)
     {
-        // 1. حفظ الإشعار في الداتابيز عشان يفضل موجود في "الجرس"
+        // 1. تخزين التنبيه في قاعدة البيانات مع تحديد النوع
         var notification = new Notification
         {
             UserId = userId,
             Title = title,
             Message = message,
+            NotificationType = type, // تحديد هل هو شات أم طلب
             ActionUrl = actionUrl,
             CreatedAt = DateTime.Now
         };
@@ -29,11 +31,12 @@ public class NotificationService
         _context.Notifications.Add(notification);
         await _context.SaveChangesAsync();
 
-        // 2. إرسال الإشعار "لحظياً" للمستخدم لو كان فاتح الموقع
+        // 2. إرسال التنبيه للمستخدم بشكل لحظي عبر الـ Hub
         await _hubContext.Clients.Group(userId).SendAsync("ReceiveNotification", new
         {
             title = notification.Title,
             message = notification.Message,
+            type = notification.NotificationType,
             actionUrl = notification.ActionUrl,
             createdAt = notification.CreatedAt
         });

@@ -9,7 +9,7 @@ public class RegisterArtisanDto
     public string Email { get; set; }
 
     [Required]
-    public int Age { get; set; }
+    public string BirthDate { get; set; }
 
     [Required]
     public string NationalId { get; set; }
@@ -28,10 +28,4 @@ public class RegisterArtisanDto
 
     [Compare("Password")]
     public string ConfirmPassword { get; set; }
-
-    // حقول إضافية كانت في كودك ومهمة لملف الحرفي
-   
-    
-   
-   // قيمة افتراضية
 }

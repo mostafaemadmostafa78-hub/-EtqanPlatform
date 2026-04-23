@@ -38,10 +38,10 @@ namespace ETQAN_BY_API.Services
             {
                 Id = artisan.ApplicationUserId,
                 FullName = artisan.User.FullName,
+                BirthDate = artisan.BirthDate?? "",
                 JobName = artisan.Job?.Name ?? "غير محدد",
                 Bio = artisan.Bio,
                 ExperienceYears = artisan.ExperienceYears,
-                StartingPrice = artisan.StartingPrice,
                 ProfilePicture = artisan.User.ProfilePicture,
                 CoverPicture = artisan.CoverPicture ?? "/images/covers/default.jpg",
                 WorkHours = artisan.WorkHours,
@@ -59,6 +59,18 @@ namespace ETQAN_BY_API.Services
         // 2. التحديث الشامل لبيانات الحرفي
         public async Task<bool> UpdateArtisanProfileAsync(string userId, UpdateArtisanProfileDto dto)
         {
+            // 1. التحقق من السن 
+            if (DateTime.TryParse(dto.BirthDate, out var birthDate))
+            {
+                // حساب تاريخ النهاردة ناقص 18 سنة
+                var minAllowedDate = DateTime.Today.AddYears(-18);
+
+                // لو تاريخ الميلاد بعد التاريخ المسموح، يبقى الشخص أصغر من 18
+                if (birthDate > minAllowedDate)
+                {
+                    throw new Exception("عذراً، يجب أن يكون عمر الحرفي 18 عاماً على الأقل للتسجيل في المنصة.");
+                }
+            }
             var artisan = await _context.Artisans
                 .Include(a => a.User)
                 .FirstOrDefaultAsync(a => a.ApplicationUserId == userId);
@@ -72,16 +84,20 @@ namespace ETQAN_BY_API.Services
             artisan.User.Governorate = dto.Governorate;
 
             // تحديث بيانات الحرفي المهنية والشخصية
-            artisan.Age = dto.Age;
+            artisan.BirthDate = dto.BirthDate;
             artisan.MaritalStatus = (MaritalStatus)dto.MaritalStatus;
             artisan.Bio = dto.Bio;
             artisan.ExperienceYears = dto.ExperienceYears;
-            artisan.StartingPrice = dto.StartingPrice;
             artisan.ServiceArea = dto.ServiceArea;
             artisan.WorkHours = dto.WorkHours;
             artisan.ResponseTime = dto.ResponseTime;
             artisan.IsEmergencyAvailable = dto.IsEmergencyAvailable;
 
+            if (!string.IsNullOrEmpty(dto.Bio))
+            {
+                string pattern = @"(\+?\d{10,14}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})";
+                artisan.Bio = System.Text.RegularExpressions.Regex.Replace(dto.Bio, pattern, "[بيانات مخفية]");
+            }
             // تحديث الخدمات
             artisan.Services = string.Join(", ", dto.Services);
 

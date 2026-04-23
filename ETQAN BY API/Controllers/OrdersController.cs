@@ -441,7 +441,7 @@ namespace ETQAN_BY_API.Controllers
             };
         }
 
-        // 3. ميثود مساعدة لجلب الرسالة التوضيحية (التي تظهر تحت اسم الخدمة في الصورة)
+        // 3. ميثود مساعدة لجلب الرسالة التوضيحية التي تظهر تحت اسم الخدمة  
         private string GetStatusMessage(RequestStatus status)
         {
             return status switch

@@ -1,4 +1,6 @@
-﻿namespace ETQAN_BY_API.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ETQAN_BY_API.DTO
 {
     public class ArtisanListDto
     {
@@ -13,10 +15,10 @@
     {
         public string Id { get; set; }
         public string FullName { get; set; }
+        public string BirthDate { get; set; }
         public string JobName { get; set; }
         public string Bio { get; set; }
         public int ExperienceYears { get; set; }
-        public decimal StartingPrice { get; set; }
         public string ProfilePicture { get; set; }
         public string? CoverPicture { get; set; }
         public string Governorate { get; set; }
