@@ -1,10 +1,10 @@
 ﻿using ETQAN.API.Models;
 using ETQAN_BY_API.DTO;
 using ETQAN_BY_API.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-
 
 namespace ETQAN_BY_API.Controllers
 {
@@ -40,7 +40,7 @@ namespace ETQAN_BY_API.Controllers
             }
 
             // ✅ لو موجود: ولد كود وابعته
-            string otp = new Random().Next(100000, 999999).ToString();
+            string otp = new Random().Next(1000, 9999).ToString();
             _cache.Set($"reset_otp_{email.ToLower().Trim()}", otp, TimeSpan.FromMinutes(60));
 
             _emailServices.SendEmail(new EmailDTO
