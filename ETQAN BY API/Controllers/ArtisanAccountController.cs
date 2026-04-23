@@ -109,7 +109,7 @@ public class ArtisanAccountController : ControllerBase
             MaritalStatus = (MaritalStatus)dto.MaritalStatus,
             JobId = dto.JobId,
             ApplicationUserId = user.Id,
-           // StartingPrice = dto.StartingPrice,
+        
             
             
         };

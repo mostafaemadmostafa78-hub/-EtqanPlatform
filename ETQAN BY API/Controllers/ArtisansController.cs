@@ -88,7 +88,7 @@ namespace ETQAN_BY_API.Controllers
 //}
 //ah
         [HttpGet("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetById(string id)
         {
             try
