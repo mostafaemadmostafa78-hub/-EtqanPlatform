@@ -13,7 +13,8 @@ namespace ETQAN.API.Data
         public DbSet<Artisan> Artisans { get; set; }
        //ah
        public DbSet<ArtisanPortfolio> ArtisanPortfolios { get; set; }
-       public DbSet<ContactMessage> ContactMessages { get; set; }
+       public DbSet<CompanyPortfolio> CompanyPortfolios { get; set; }
+        public DbSet<ContactMessage> ContactMessages { get; set; }
        public DbSet<ChatMessage> ChatMessages { get; set; }
        public DbSet<Notification> Notifications { get; set; }
         //.
@@ -48,13 +49,18 @@ namespace ETQAN.API.Data
                 .WithOne(a => a.User)
                 .HasForeignKey<Artisan>(a => a.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Company)
+                .WithMany()
+                .HasForeignKey(o => o.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //modelBuilder.Entity<MaritalStatus>().HasData(
             //    new MaritalStatus { Id = 1, Name = "أعزب" },
             //    new MaritalStatus { Id = 2, Name = "متزوج" },
             //    new MaritalStatus { Id = 3, Name = "أرمل" },
             //    new MaritalStatus { Id = 4, Name = "مطلق" }
-            
+
             modelBuilder.Entity<Job>().HasData(
                 new Job { Id = 1, Name = "حداد" },
                 new Job { Id = 2, Name = "كهرباء" },
@@ -75,7 +81,12 @@ namespace ETQAN.API.Data
                 new Job { Id = 17, Name = "فني تركيب دش" },
                 new Job { Id = 18, Name = "تنظيف" },
                 new Job { Id = 19, Name = "استشارات هندسية" },
-                new Job { Id = 20, Name = "رش مبيدات" }
+                new Job { Id = 20, Name = "رش مبيدات" },
+                new Job { Id = 21, Name = "نقل أثاث" },
+                new Job { Id = 22, Name = "نقل رمل وزلط" },
+                new Job { Id = 23, Name = "نقل مخلفات بناء" },
+                new Job { Id = 24, Name = "تأجير قلابات" },
+                new Job { Id = 25, Name = "دهانات وتشطيبات" }
            );
 
             modelBuilder.Entity<ApplicationUser>()
@@ -89,7 +100,32 @@ namespace ETQAN.API.Data
                  .HasOne(p => p.Artisan)
                  .WithMany(a => a.Portfolio) 
                  .HasForeignKey(p => p.ArtisanId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CompanyPortfolio>()
+                 .HasOne(p => p.Company)
+                 .WithMany(c => c.Portfolio)
+                 .HasForeignKey(p => p.CompanyId)
                  .OnDelete(DeleteBehavior.Cascade); 
+
+            modelBuilder.Entity<CompanyService>()
+               .HasKey(cs => new { cs.CompanyId, cs.JobId });
+
+            modelBuilder.Entity<CompanyService>()
+                .HasOne(cs => cs.Company)
+                .WithMany(c => c.CompanyServices)
+                .HasForeignKey(cs => cs.CompanyId);
+
+            modelBuilder.Entity<CompanyService>()
+                .HasOne(cs => cs.Job)
+                .WithMany() 
+                .HasForeignKey(cs => cs.JobId);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Company)
+                .WithMany(c => c.Reviews)
+                .HasForeignKey(r => r.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
             //.
 
             // ===== Reviews: Prevent Multiple Cascade Paths =====
@@ -104,19 +140,19 @@ namespace ETQAN.API.Data
                 .WithMany(a => a.Reviews)
                 .HasForeignKey(r => r.ArtisanId)
                 .OnDelete(DeleteBehavior.Restrict);
-
             // ===== ServiceRequest Relationships =====
+            modelBuilder.Entity<ServiceRequest>()
+                .HasOne(s => s.Artisan)
+                .WithMany(a => a.ServiceRequests)
+                .HasForeignKey(s => s.ArtisanId)
+                .HasPrincipalKey(a => a.ApplicationUserId);
+
             modelBuilder.Entity<ServiceRequest>()
                 .HasOne(s => s.Client)
                 .WithMany(c => c.Requests)
                 .HasForeignKey(s => s.ClientId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasPrincipalKey(c => c.ApplicationUserId);
 
-            //modelBuilder.Entity<ServiceRequest>()
-            //    .HasOne(s => s.Artisan)
-            //    .WithMany(a => a.ServiceRequests)
-            //    .HasForeignKey(s => s.ArtisanId)
-            //    .OnDelete(DeleteBehavior.Restrict);
 
             // ===== Orders =====
             modelBuilder.Entity<Order>()
@@ -139,14 +175,16 @@ namespace ETQAN.API.Data
                 .Property(o => o.TotalPrice)
                 .HasPrecision(18, 2);
 
+            modelBuilder.Entity<Order>()
+                 .HasOne(o => o.Artisan)
+                 .WithMany()
+                 .HasForeignKey(o => o.ArtisanId)
+                 .HasPrincipalKey(a => a.ApplicationUserId);
+
             modelBuilder.Entity<OrderItem>()
                 .Property(oi => oi.UnitPrice)
                 .HasPrecision(18, 2);
-            //ah
-            modelBuilder.Entity<Artisan>()
-                 .Property(a => a.StartingPrice)
-                 .HasPrecision(18, 2);
-            //.
+       
         }
     }
 }

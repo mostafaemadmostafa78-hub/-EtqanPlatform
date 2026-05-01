@@ -25,9 +25,7 @@ public class Artisan
     public string ApplicationUserId { get; set; }
     public ApplicationUser User { get; set; }
     //ah
-    // ---الإضافات الجديدة  ---
     [Range(0, 100000)]
-    public decimal StartingPrice { get; set; } // سعر الخدمة بيبدأ من كام؟
 
     public int ExperienceYears { get; set; } // سنين الخبرة
 
@@ -39,13 +37,14 @@ public class Artisan
     public string? Services { get; set; } // الخدمات
 
     [StringLength(200)]
-    public string? ServiceArea { get; set; } // نطاق الخدمة (المنطقة)
+    public string? ServiceArea { get; set; } // نطاق الخدمة /المنطقة
 
     [StringLength(50)]
     public string? ResponseTime { get; set; } // سرعة الاستجابة
 
     public bool IsEmergencyAvailable { get; set; } // متاح للطوارئ؟
     public decimal AverageRating { get; set; } = 0;
+    public int CompletedOrdersCount { get; set; } = 0; // عدد الطلبات المكتملة
 
     [StringLength(255)]
     public string? CoverPicture { get; set; }
@@ -53,6 +52,8 @@ public class Artisan
     // علاقة مع معرض الأعمال
     public ICollection<ArtisanPortfolio> Portfolio { get; set; } = new List<ArtisanPortfolio>();
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
-    
+    // علاقة مع طلبات الخدمة
+    public virtual ICollection<ServiceRequest> ServiceRequests { get; set; } = new List<ServiceRequest>();
+
     //.
 }

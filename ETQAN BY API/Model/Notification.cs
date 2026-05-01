@@ -7,8 +7,6 @@
         public string Title { get; set; }
         public string Message { get; set; }
         public string? ActionUrl { get; set; }
-
-        // نوع التنبيه (Chat أو Order) لتقسيم الجرس في الواجهة
         public string NotificationType { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;

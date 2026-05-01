@@ -1,18 +1,17 @@
 ﻿using ETQAN.API.Data;
+using ETQAN.API.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ETQAN_BY_API.Controllers
 {
-    /// <summary>
-    /// المتحكم المسؤول عن إدارة عمليات الدردشة الملحقة وتداول الملفات والوسائط
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ChatController : ControllerBase
@@ -26,16 +25,59 @@ namespace ETQAN_BY_API.Controllers
             _env = env;
         }
 
-        #region إدارة رفع الوسائط (صور - صوت)
-
-        [HttpPost("upload-chat-file")]
-        public async Task<IActionResult> UploadChatFile(IFormFile file, [FromQuery] string fileType)
+        [Authorize]
+        [HttpPost("mark-as-read/{senderId}")]
+        public async Task<IActionResult> MarkAsRead(string senderId)
         {
-            if (file == null || file.Length == 0) return BadRequest("لم يتم اختيار ملف للرفع.");
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            // تحديد مسار المجلد بناءً على نوع الملف (chats/images أو chats/audio)
-            string subFolder = fileType == "audio" ? "audio" : "images";
-            var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "chats", subFolder);
+            var messages = await _context.ChatMessages
+                .Where(m => m.SenderId == senderId && m.ReceiverId == currentUserId && !m.IsRead)
+                .ToListAsync();
+
+            messages.ForEach(m => m.IsRead = true);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpGet("my-conversations")]
+        public async Task<IActionResult> GetMyConversations([FromQuery] string? search = null)
+        {
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized();
+
+            var query = _context.ChatMessages
+                .Where(m => m.SenderId == currentUserId || m.ReceiverId == currentUserId)
+                .GroupBy(m => m.SenderId == currentUserId ? m.ReceiverId : m.SenderId);
+
+            var conversations = await query
+                .Select(g => new {
+                    ContactId = g.Key,
+                    ContactName = _context.Users
+                        .Where(u => u.Id == g.Key)
+                        .Select(u => u.UserType == UserType.Company ? u.CompanyName : u.FullName)
+                        .FirstOrDefault(),
+                    ContactImage = _context.Users.Where(u => u.Id == g.Key).Select(u => u.ProfilePicture).FirstOrDefault(),
+                    LastMessage = g.OrderByDescending(m => m.Timestamp).FirstOrDefault().MessageContent,
+                    LastMessageDate = g.Max(m => m.Timestamp),
+                    UnreadCount = g.Count(m => m.ReceiverId == currentUserId && !m.IsRead)
+                })
+                .Where(c => string.IsNullOrEmpty(search) ||
+                            c.ContactName.Contains(search) ||
+                            c.LastMessage.Contains(search))
+                .OrderByDescending(c => c.LastMessageDate)
+                .ToListAsync();
+
+            return Ok(conversations);
+        }
+
+        [HttpPost("upload-chat-image")]
+        public async Task<IActionResult> UploadChatImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return BadRequest("لم يتم اختيار صورة للرفع.");
+
+            var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "chats", "images");
 
             if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
 
@@ -47,47 +89,10 @@ namespace ETQAN_BY_API.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            var fileUrl = $"/uploads/chats/{subFolder}/{fileName}";
+            var fileUrl = $"/uploads/chats/images/{fileName}";
             return Ok(new { url = fileUrl });
         }
-        #endregion
 
-        #region جلب البيانات والمحادثات
-
-        /// <summary>
-        /// جلب قائمة المحادثات النشطة مع إمكانية البحث في أسماء جهات الاتصال
-        /// </summary>
-        [HttpGet("my-conversations")]
-        public async Task<IActionResult> GetMyConversations([FromQuery] string? search = null)
-        {
-            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(currentUserId)) return Unauthorized();
-
-            // استعلام لجلب المحادثات وتجميعها حسب الطرف الآخر
-            var query = _context.ChatMessages
-                .Where(m => m.SenderId == currentUserId || m.ReceiverId == currentUserId)
-                .GroupBy(m => m.SenderId == currentUserId ? m.ReceiverId : m.SenderId);
-
-            var conversations = await query
-                .Select(g => new {
-                    ContactId = g.Key,
-                    // جلب بيانات الطرف الآخر من جدول المستخدمين
-                    ContactName = _context.Users.Where(u => u.Id == g.Key).Select(u => u.FullName).FirstOrDefault(),
-                    ContactImage = _context.Users.Where(u => u.Id == g.Key).Select(u => u.ProfilePicture).FirstOrDefault(),
-                    LastMessage = g.OrderByDescending(m => m.Timestamp).FirstOrDefault().MessageContent,
-                    LastMessageDate = g.Max(m => m.Timestamp)
-                })
-                // تطبيق فلترة البحث في حالة وجود كلمة مفتاحية
-                .Where(c => string.IsNullOrEmpty(search) || c.ContactName.Contains(search))
-                .OrderByDescending(c => c.LastMessageDate)
-                .ToListAsync();
-
-            return Ok(conversations);
-        }
-
-        /// <summary>
-        /// استرجاع السجل الكامل للمحادثة بين المستخدم الحالي ومستخدم آخر
-        /// </summary>
         [HttpGet("history/{otherUserId}")]
         public async Task<IActionResult> GetChatHistory(string otherUserId)
         {
@@ -104,14 +109,12 @@ namespace ETQAN_BY_API.Controllers
                     m.MessageContent,
                     m.ImageUrl,
                     m.IsImage,
-                    m.AudioUrl,
-                    m.IsAudio,
-                    m.Timestamp
+                    m.Timestamp,
+                    m.IsRead
                 })
                 .ToListAsync();
 
             return Ok(messages);
         }
-        #endregion
     }
 }

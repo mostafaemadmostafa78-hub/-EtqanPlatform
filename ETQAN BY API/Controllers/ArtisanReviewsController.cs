@@ -1,5 +1,6 @@
 ﻿//ah
 using ETQAN.API.Data;
+using ETQAN_BY_API.DTO;
 using ETQAN_BY_API.Model.DTOs;
 using ETQAN_BY_API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -26,17 +27,15 @@ namespace ETQAN_BY_API.Controllers
         /// إضافة تقييم جديد أو تحديث تقييم موجود مسبقاً
         /// </summary>
         [HttpPost("submit")]
-        [Authorize(Roles = "Client")] 
-        public async Task<IActionResult> SubmitReview([FromBody] UpdateReviewDto dto)
+        [Authorize(Roles = "Client")]
+        public async Task<IActionResult> SubmitReview([FromBody] ArtisanReviewCreateDto dto)
         {
-            // 1. جلب الـ ID بتاع العميل من الـ Token 
             var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrEmpty(clientId))
                 return Unauthorized(new { message = "يجب تسجيل الدخول كعميل لتتمكن من التقييم" });
 
-            // 2. إرسال الـ OrderId والتقييم للـ Service للتحقق والحفظ
-            var result = await _artisanService.AddOrUpdateReviewAsync(clientId, dto);
+            var result = await _artisanService.AddOrUpdateArtisanReviewAsync(clientId, dto);
 
             if (result)
             {
@@ -49,20 +48,18 @@ namespace ETQAN_BY_API.Controllers
         [Authorize(Roles = "Artisan")]
         public async Task<IActionResult> GetMyReviews()
         {
-            // 1. نجيب الـ ID بتاع الحرفي من التوكن (أمان)
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var artisan = await _context.Artisans.FirstOrDefaultAsync(a => a.ApplicationUserId == userId);
 
             if (artisan == null) return NotFound("الحرفي غير موجود");
 
-            // 2. نجيب كل التقييمات اللي اتعملت له
             var reviews = await _context.Reviews
-                .Where(r => r.ArtisanId == artisan.Id)
-                .Include(r => r.Reviewer) // عشان يشوف اسم العميل اللي قيمه
-                .OrderByDescending(r => r.CreatedAt) // الأحدث يظهر الأول
+                .Where(r => r.Artisan != null && r.Artisan.ApplicationUserId == userId)
+                .Include(r => r.Reviewer) 
+                .OrderByDescending(r => r.CreatedAt)   
                 .Select(r => new {
                     CustomerName = r.Reviewer.FullName,
-                    Rating = r.Rating,
+                    Rating = r.Rating.ToString("0.0"),
                     Comment = r.Comment,
                     Date = r.CreatedAt.ToString("yyyy/MM/dd")
                 })

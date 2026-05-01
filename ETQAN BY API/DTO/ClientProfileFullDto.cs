@@ -1,13 +1,24 @@
 ﻿namespace ETQAN_BY_API.DTO
 {
     // بيانات البروفايل الأساسية
-    public class ClientProfileDto
+    public class ClientProfileDisplayDto
     {
-        public string FullName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Governorate { get; set; }
-        public string ProfilePicture { get; set; }
+        public string? FullName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Governorate { get; set; }
+        public string? ProfilePictureUrl { get; set; }
+        public string? CoverPictureUrl { get; set; }
+    }
+
+    public class ClientProfileUpdateDto
+    {
+        public string? FullName { get; set; }
+        public string? Email { get; set; }
+        public string ?PhoneNumber { get; set; }
+        public string? Governorate { get; set; }
+        public IFormFile? ProfileFile { get; set; }
+        public IFormFile? CoverPhotoFile { get; set; }
     }
 
     // بيانات سجل الطلبات (History)
@@ -35,11 +46,7 @@
     }
 
     // نموذج تحديث البيانات
-    public class UpdateProfileDto
-    {
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Governorate { get; set; }
-        public string? NewPassword { get; set; }
-    }
+    //public class UpdateProfileDto
+    //{
+    //}
 }

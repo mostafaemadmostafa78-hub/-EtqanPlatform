@@ -7,13 +7,14 @@ namespace ETQAN_BY_API.DTO
         [Required]
         [StringLength(150)]
         public string ServiceName { get; set; }
-
-        [StringLength(500)]
-        public string? Description { get; set; }
+        public string FullName { get; set; } 
+        public string Address { get; set; }   
+        public string Governorate { get; set; }
 
         [Required]
-        public int ClientId { get; set; }
+        public string ClientId { get; set; }
         [Required]
-        public int ArtisanId { get; set; }
+        public string ArtisanId { get; set; }
+        public int? CompanyId { get; set; }
     }
 }

@@ -12,6 +12,7 @@ namespace ETQAN.API.Models
         public string FullName { get; set; }
 
         public string? ProfilePicture { get; set; }
+        public string? CoverPicture { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string ? CompanyName { get; set; }
         public string? CommercialRegister { get; set; }

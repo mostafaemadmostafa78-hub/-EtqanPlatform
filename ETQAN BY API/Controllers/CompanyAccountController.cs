@@ -130,8 +130,9 @@ namespace ETQAN_BY_API.Controllers
                 };
 
                 var result = await _userManager.CreateAsync(user, cachedData.Password);
-                if (!result.Succeeded) return BadRequest(result.Errors);
 
+                if (!result.Succeeded) return BadRequest(result.Errors);
+            
                 // التأكد من وجود الـ Role
                 if (!await _roleManager.RoleExistsAsync("Company"))
                     await _roleManager.CreateAsync(new IdentityRole("Company"));

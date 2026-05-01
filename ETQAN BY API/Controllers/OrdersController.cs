@@ -3,7 +3,6 @@ using ETQAN.API.Models;
 using ETQAN.API.Models.Enums;
 using ETQAN_BY_API.DTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -12,8 +11,7 @@ namespace ETQAN_BY_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Client")]
-
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -24,42 +22,26 @@ namespace ETQAN_BY_API.Controllers
             _context = context;
             _notificationService = notificationService;
         }
+        #region جزء المتجر
 
-        [HttpPost]
+        [HttpPost("place-order")]
         public async Task<IActionResult> PlaceOrder(OrderRequestDto dto)
         {
             var user = await _context.Users.AnyAsync(u => u.Id == dto.ApplicationUserId);
             if (!user) return BadRequest("User not found");
 
             using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
-                var order = new Order
-                {
-                    ApplicationUserId = dto.ApplicationUserId,
-                    OrderDate = DateTime.Now,
-                    TotalPrice = 0,
-                    OrderItems = new List<OrderItem>()
-                };
-
+                var order = new Order { ApplicationUserId = dto.ApplicationUserId, OrderDate = DateTime.Now, TotalPrice = 0, OrderItems = new List<OrderItem>() };
                 decimal finalPrice = 0;
 
                 foreach (var item in dto.Items)
                 {
                     var product = await _context.Products.FindAsync(item.ProductId);
+                    if (product == null || product.StockQuantity < item.Quantity) return BadRequest("Stock Issue");
 
-                    if (product == null) return NotFound($"Product {item.ProductId} not found");
-                    if (product.StockQuantity < item.Quantity) return BadRequest($"No enough stock for {product.Name}");
-
-                    var orderDetail = new OrderItem
-                    {
-                        ProductId = product.Id,
-                        Quantity = item.Quantity,
-                        UnitPrice = product.Price,
-                        Order = order
-                    };
-
+                    var orderDetail = new OrderItem { ProductId = product.Id, Quantity = item.Quantity, UnitPrice = product.Price, Order = order };
                     product.StockQuantity -= item.Quantity;
                     finalPrice += (product.Price * item.Quantity);
                     order.OrderItems.Add(orderDetail);
@@ -67,460 +49,479 @@ namespace ETQAN_BY_API.Controllers
 
                 order.TotalPrice = finalPrice;
                 _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return Ok(new { OrderId = order.Id, Total = order.TotalPrice });
+            }
+            catch { await transaction.RollbackAsync(); return StatusCode(500, "Error"); }
+        }
+
+        [HttpPost("checkout")]
+        public async Task<IActionResult> Checkout([FromBody] List<CartItemDto> cartItems)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var order = new Order { ApplicationUserId = userId, OrderDate = DateTime.Now, TotalPrice = 0 };
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                decimal total = 0;
+                foreach (var item in cartItems)
+                {
+                    var product = await _context.Products.FindAsync(item.Id);
+                    if (product == null || product.StockQuantity < item.Quantity) return BadRequest();
+                    _context.OrderItems.Add(new OrderItem { OrderId = order.Id, ProductId = product.Id, Quantity = item.Quantity, UnitPrice = product.Price });
+                    product.StockQuantity -= item.Quantity;
+                    total += (product.Price * item.Quantity);
+                }
+                order.TotalPrice = total;
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return Ok(new { orderId = order.Id, total });
+            }
+            catch { await transaction.RollbackAsync(); return BadRequest(); }
+        }
+
+        [HttpGet("store-order/{id}")]
+        public async Task<ActionResult> GetStoreOrder(int id)
+        {
+            var order = await _context.Orders.Include(o => o.OrderItems!).ThenInclude(oi => oi.Product).FirstOrDefaultAsync(o => o.Id == id);
+            if (order == null) return NotFound();
+            return Ok(order);
+        }
+
+        #endregion
+        [Authorize(Roles = "Client")]
+        [HttpPost("create-service-request")]
+        public async Task<IActionResult> CreateServiceRequest([FromBody] CreateServiceRequestDto dto)
+        {
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ApplicationUserId == dto.ClientId);
+            if (client == null) return BadRequest("العميل غير موجود");
+
+            if (dto.CompanyId != 0 && dto.CompanyId != null)
+            {
+                var company = await _context.Companies.AnyAsync(c => c.Id == dto.CompanyId);
+                if (!company) return BadRequest("الشركة المطلوبة غير موجودة");
+            }
+
+            if (!string.IsNullOrEmpty(dto.ArtisanId) && dto.ArtisanId != "string")
+            {
+                var artisan = await _context.Artisans.AnyAsync(a => a.ApplicationUserId == dto.ArtisanId);
+                if (!artisan) return BadRequest("الحرفي المطلوب غير موجود");
+            }
+
+            var newRequest = new ServiceRequest
+            {
+                FullName = dto.FullName,
+                ServiceName = dto.ServiceName,
+                Address = dto.Address,
+                Governorate = dto.Governorate,
+                ClientId = dto.ClientId,
+                ArtisanId = (dto.ArtisanId == "string" || string.IsNullOrEmpty(dto.ArtisanId)) ? null : dto.ArtisanId,
+                CompanyId = dto.CompanyId == 0 ? null : dto.CompanyId,
+                RequestDate = DateTime.Now,
+                Status = RequestStatus.Pending
+            };
+
+            _context.ServiceRequests.Add(newRequest);
+            await _context.SaveChangesAsync();
+
+            string targetId = newRequest.ArtisanId;
+            if (string.IsNullOrEmpty(targetId) && newRequest.CompanyId.HasValue)
+            {
+                targetId = await _context.Companies
+                    .Where(c => c.Id == newRequest.CompanyId)
+                    .Select(c => c.ApplicationUserId)
+                    .FirstOrDefaultAsync();
+            }
+
+            if (!string.IsNullOrEmpty(targetId))
+            {
+                await _notificationService.SendNotificationAsync(
+                    targetId,
+                    "طلب جديد!",
+                    $"قام {dto.FullName} بطلب خدمة: {dto.ServiceName}",
+                    "Order",
+                    "/orders/details/" + newRequest.Id
+                );
+            }
+
+            return Ok(new { message = "تم إرسال طلبك بنجاح", requestId = newRequest.Id });
+        }
+
+        [Authorize(Roles = "Company,Artisan")]
+        [HttpGet("incoming-requests")]
+        public async Task<IActionResult> GetIncomingRequests()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var requests = await _context.ServiceRequests
+                .Where(r => r.ArtisanId == userId || r.Company.ApplicationUserId == userId)
+                .OrderByDescending(r => r.RequestDate)
+                .Select(r => new {
+                    r.Id,
+                    r.ServiceName,
+                    ClientName = r.FullName,
+                    Location = $"{r.Governorate} - {r.Address}",
+                    r.RequestDate,
+                    r.Status,
+                    StatusArabic = GetStatusArabic(r.Status)
+                }).ToListAsync();
+
+            return Ok(requests);
+        }
+
+        [HttpGet("service-request-details/{requestId}")]
+        public async Task<ActionResult> GetServiceRequestDetails(int requestId)
+        {
+            var request = await _context.ServiceRequests
+                .Include(s => s.Artisan).ThenInclude(a => a.User)
+                .Include(s => s.Company)
+                .FirstOrDefaultAsync(s => s.Id == requestId);
+
+            if (request == null) return NotFound(new { message = "الطلب غير موجود" });
+
+            return Ok(new
+            {
+                Id = request.Id,
+                ServiceName = request.ServiceName,
+                Status = request.Status.ToString(),
+                StatusArabic = GetStatusArabic(request.Status),
+                StatusDescription = GetStatusMessage(request.Status),
+                OrderDetails = new
+                {
+                    Date = request.RequestDate.ToString("yyyy/MM/dd"),
+                    ClientName = request.FullName,
+                    Location = $"{request.Governorate} - {request.Address}"
+                },
+                ArtisanInfo = request.ArtisanId == null ? null : new
+                {
+                    Name = request.Artisan?.User?.FullName,
+                    //Phone = request.Artisan?.User?.PhoneNumber
+                },
+                CompanyInfo = request.CompanyId == null ? null : new
+                {
+                    Name = request.Company?.CompanyName,
+                    //Phone = request.Company?.User?.PhoneNumber
+                }
+            });
+        }
+
+        [Authorize(Roles = "Company,Artisan")]
+        [HttpPut("update-request-status/{requestId}")]
+        public async Task<IActionResult> UpdateRequestStatus(int requestId, [FromBody] RequestStatus newStatus)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var request = await _context.ServiceRequests
+                .Include(r => r.Company)
+                .Include(r => r.Client) 
+                .FirstOrDefaultAsync(r => r.Id == requestId);
+
+            if (request == null) return NotFound("الطلب غير موجود");
+
+            if (request.ArtisanId != userId && (request.Company == null || request.Company.ApplicationUserId != userId))
+                return Forbid();
+
+            
+            request.Status = newStatus;
+            await _context.SaveChangesAsync();
+
+            var targetUserId = request.Client?.ApplicationUserId;
+
+            if (!string.IsNullOrEmpty(targetUserId))
+            {
+                await _notificationService.SendNotificationAsync(
+                    targetUserId,
+                    "تحديث بخصوص طلبك",
+                    $"تغيرت حالة طلبك لخدمة {request.ServiceName} إلى {GetStatusArabic(newStatus)}",
+                    "OrderUpdate",
+                    "/my-orders"
+                );
+            }
+
+            return Ok(new { message = "تم تحديث حالة الطلب بنجاح" });
+        }
+        [Authorize(Roles = "Company,Artisan")]
+        [HttpGet("incoming-requests-tracking")]
+        public async Task<IActionResult> GetIncomingRequestsTracking(RequestStatus? status)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var query = _context.ServiceRequests
+                .Where(r => r.ArtisanId == userId || r.Company.ApplicationUserId == userId);
+
+
+            if (status.HasValue)
+            {
+                query = query.Where(r => r.Status == status.Value);
+            }
+
+            var requests = await query
+                .OrderByDescending(r => r.RequestDate)
+                .Select(r => new {
+                    r.Id,
+                    r.ServiceName,
+                    ClientName = r.FullName,
+                    Location = $"{r.Governorate} - {r.Address}",
+                    r.RequestDate,
+                    r.Status,
+                    StatusArabic = GetStatusArabic(r.Status)
+                })
+                .ToListAsync();
+
+            return Ok(requests);
+        }
+        [Authorize(Roles = "Client")]
+        [HttpPost("cancel-request/{id}")]
+        public async Task<IActionResult> CancelRequest(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var request = await _context.ServiceRequests.Include(r => r.Client).FirstOrDefaultAsync(r => r.Id == id);
+
+            if (request == null || request.Client.ApplicationUserId != userId) return Forbid();
+
+            if (request.Status == RequestStatus.Pending || request.Status == RequestStatus.Accepted)
+            {
+                request.Status = RequestStatus.Cancelled;
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "تم إلغاء الطلب" });
+            }
+            return BadRequest("لا يمكن إلغاء الطلب حالياً");
+        }
+    
+        [Authorize(Roles = "Client")]
+        [HttpPost("reorder/{oldRequestId}")]
+        public async Task<IActionResult> Reorder(int oldRequestId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var old = await _context.ServiceRequests
+                .Include(r => r.Client)
+                .ThenInclude(c => c.User)
+                .FirstOrDefaultAsync(r => r.Id == oldRequestId && r.ClientId == userId);
+
+            if (old == null) return NotFound("الطلب الأصلي غير موجود");
+
+            var newReq = new ServiceRequest
+            {
+                ServiceName = old.ServiceName,
+                FullName = old.FullName,
+                Address = old.Address,
+                Governorate = old.Governorate,
+                ClientId = old.ClientId,
+                ArtisanId = old.ArtisanId,
+                CompanyId = old.CompanyId,
+                RequestDate = DateTime.Now,
+                Status = RequestStatus.Pending
+            };
+
+            _context.ServiceRequests.Add(newReq);
+            await _context.SaveChangesAsync();
+
+            string targetProviderId = old.ArtisanId;
+            if (string.IsNullOrEmpty(targetProviderId) && old.CompanyId.HasValue)
+            {
+                targetProviderId = await _context.Companies
+                    .Where(c => c.Id == old.CompanyId)
+                    .Select(c => c.ApplicationUserId)
+                    .FirstOrDefaultAsync();
+            }
+
+            if (!string.IsNullOrEmpty(targetProviderId))
+            {
+                var clientName = old.Client?.User?.FullName ?? old.FullName;
+
+                await _notificationService.SendNotificationAsync(
+                    targetProviderId,
+                    "إعادة طلب خدمة",
+                    $"قام {clientName} بإعادة طلب خدمة: {old.ServiceName}",
+                    "Reorder",
+                    "/orders/details/" + newReq.Id
+                );
+            }
+
+            return Ok(new { message = "تم إعادة إرسال الطلب بنجاح", requestId = newReq.Id });
+        }
+
+        [Authorize(Roles = "Company,Artisan")]
+        [HttpPost("create-invoice/{requestId}")]
+        public async Task<IActionResult> CreateInvoice(int requestId, [FromBody] List<CompanyInvoiceItemDto> items)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var request = await _context.ServiceRequests.FindAsync(requestId);
+
+            if (request == null) return NotFound("الطلب غير موجود");
+
+            if (request.ArtisanId != userId && (request.CompanyId == null || !_context.Companies.Any(c => c.Id == request.CompanyId && c.ApplicationUserId == userId)))
+                return Forbid();
+
+            var client = await _context.Clients
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == request.ClientId);
+
+            if (client == null)
+            {
+                client = await _context.Clients
+                    .Include(c => c.User)
+                    .FirstOrDefaultAsync(c => c.Id.ToString() == request.ClientId);
+            }
+
+            if (client == null) return BadRequest("عذراً، لم نتمكن من الوصول لبيانات العميل المرتبطة بهذا الطلب");
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var order = new Order
+                {
+                    ApplicationUserId = client.ApplicationUserId,
+                    OrderDate = DateTime.Now,
+                    ArtisanId = request.ArtisanId,
+                    CompanyId = request.CompanyId,
+                    IsServiceOrder = true,
+                    ServiceRequestId = requestId,
+                    TotalPrice = 0
+                };
+
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                decimal total = 0;
+                foreach (var item in items)
+                {
+                    var orderItem = new OrderItem
+                    {
+                        OrderId = order.Id,
+                        CustomItemName = item.ItemName,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        ProductId = null
+                    };
+
+                    _context.OrderItems.Add(orderItem);
+                    total += (item.UnitPrice * item.Quantity);
+                }
+
+                order.TotalPrice = total;
+                request.Status = RequestStatus.Finished;
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return Ok(new { OrderId = order.Id, Total = order.TotalPrice });
+                await _notificationService.SendNotificationAsync(
+                    client.ApplicationUserId,
+                    "تم إصدار فاتورة",
+                    $"تم إنهاء الخدمة وإصدار فاتورة بقيمة {total} ج.م",
+                    "Invoice",
+                    "/invoice-details/" + order.Id
+                );
+
+                return Ok(new { message = "تم إصدار الفاتورة بنجاح", orderId = order.Id, total });
             }
             catch (Exception)
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Error processing your order");
+                return StatusCode(500, "خطأ في إنشاء الفاتورة");
             }
         }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<OrderResponseDto>> GetOrder(int id)
+        [HttpGet("request-details-for-provider/{requestId}")]
+        public async Task<ActionResult> GetRequestDetailsForProvider(int requestId)
         {
+            var request = await _context.ServiceRequests
+                .FirstOrDefaultAsync(s => s.Id == requestId);
+
+            if (request == null) return NotFound(new { message = "الطلب غير موجود" });
+
+            return Ok(new
+            {
+                Id = request.Id,
+                ServiceName = request.ServiceName,
+                Status = request.Status.ToString(),
+                StatusArabic = GetStatusArabic(request.Status),
+                OrderDetails = new
+                {
+                    Date = request.RequestDate.ToString("yyyy/MM/dd"),
+                    ClientName = request.FullName,
+                    Location = $"{request.Governorate} - {request.Address}",
+                    PriceStatus = "لم يتم التحديد"
+                }
+            });
+        }
+        [HttpGet("invoice-details/{id}")]
+        public async Task<IActionResult> GetInvoice(int id)
+        {
+
             var order = await _context.Orders
-                .Include(o => o.OrderItems!).ThenInclude(oi => oi.Product)
+                .Include(o => o.User) 
+                .Include(o => o.Artisan).ThenInclude(a => a.User) 
+                .Include(o => o.Company).ThenInclude(c => c.User) 
+                .Include(o => o.OrderItems) 
+                .Include(o => o.ServiceRequest) 
                 .FirstOrDefaultAsync(o => o.Id == id);
 
-            if (order == null) return NotFound();
+            if (order == null) return NotFound(new { message = "الفاتورة غير موجودة" });
 
-            var response = new OrderResponseDto
+            return Ok(new
             {
-                OrderId = order.Id,
-                Date = order.OrderDate,
-                Total = order.TotalPrice,
-                Details = order.OrderItems?.Select(x => new OrderItemResponseDto
+                InvoiceHeader = new
                 {
-                    ProductName = x.Product.Name,
-                    Quantity = x.Quantity,
-                    PriceAtPurchase = x.UnitPrice
-                }).ToList() ?? new List<OrderItemResponseDto>()
-            };
-
-            return Ok(response);
-        }
-        //[HttpPost("checkout")]
-        //[Authorize]
-        //public async Task<IActionResult> Checkout([FromBody] List<CartItemDto> cartItems)
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        //    // 1. إنشاء الـ Order الأساسي
-        //    var order = new Order
-        //    {
-        //        ApplicationUserId = userId,
-        //        OrderDate = DateTime.Now,
-        //        TotalPrice = cartItems.Sum(item => item.Price * item.Quantity)
-        //    };
-
-        //    _context.Orders.Add(order);
-        //    await _context.SaveChangesAsync(); // بنسيف عشان ناخد الـ OrderId
-
-        //    // 2. تحويل كل حتة في السلة لـ OrderItem في الداتابيز
-        //    foreach (var item in cartItems)
-        //    {
-        //        var orderItem = new OrderItem
-        //        {
-        //            OrderId = order.Id,
-        //            ProductId = item.Id,
-        //            Quantity = item.Quantity,
-        //            UnitPrice = item.Price
-        //        };
-        //        _context.OrderItems.Add(orderItem);
-        //    }
-
-        //    await _context.SaveChangesAsync();
-        //    return Ok(new { message = "تم إتمام الطلب بنجاح!" });
-        //}
-
-       // ah
-        [HttpPost("checkout")]
-        [Authorize]
-        public async Task<IActionResult> Checkout([FromBody] List<CartItemDto> cartItems)
-        {
-            // 1. نجيب الـ UserId من التوكن عشان الأمان
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-            // 2. استخدام Transaction عشان نضمن إن الطلب يتسيف كله أو لا شيء (كل المنتجات تتنقص من المخزن صح)
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            try
-            {
-                // 3. إنشاء الـ Order الأساسي
-                var order = new Order
-                {
-                    ApplicationUserId = userId,
-                    OrderDate = DateTime.Now,
-                    TotalPrice = 0 // هنحسبه في السيرفر أضمن
-                };
-
-                _context.Orders.Add(order);
-                await _context.SaveChangesAsync(); // سيفنا عشان نحصل على OrderId
-
-                decimal totalCalculatedPrice = 0;
-
-                // 4. معالجة كل منتج في السلة
-                foreach (var item in cartItems)
-                {
-                    // نأتي بالمنتج من الداتابيز (مهم جداً عشان السعر والمخزن)
-                    var product = await _context.Products.FindAsync(item.Id);
-
-                    if (product == null)
-                        return BadRequest($"المنتج رقم {item.Id} غير موجود.");
-
-                    if (product.StockQuantity < item.Quantity)
-                        return BadRequest($"الكمية المطلوبة من {product.Name} غير متوفرة حالياً.");
-
-                    // إنشاء بند الطلب
-                    var orderItem = new OrderItem
-                    {
-                        OrderId = order.Id,
-                        ProductId = product.Id,
-                        Quantity = item.Quantity,
-                        UnitPrice = product.Price // نأخذ السعر من الداتابيز  
-                    };
-
-                    // 5. تحديث المخزن وحساب الإجمالي
-                    product.StockQuantity -= item.Quantity;
-                    totalCalculatedPrice += (product.Price * item.Quantity);
-
-                    _context.OrderItems.Add(orderItem);
-                }
-
-                // 6. تحديث السعر النهائي في الطلب
-                order.TotalPrice = totalCalculatedPrice;
-                await _context.SaveChangesAsync();
-
-                // تأكيد العملية كلها
-                await transaction.CommitAsync();
-
-                return Ok(new { message = "تم إتمام الطلب بنجاح!", orderId = order.Id, total = order.TotalPrice });
-            }
-            catch (Exception ex)
-            {
-                // لو حصل أي خطأ في النص، نلغي كل اللي حصل (Rollback)
-                await transaction.RollbackAsync();
-                return StatusCode(500, "حدث خطأ أثناء معالجة الطلب، حاول مرة أخرى.");
-            }
-        }
-        //.
-
-        //ah
-        [HttpPost("reorder/{oldOrderId}")]
-        public async Task<IActionResult> Reorder(int oldOrderId)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var oldOrder = await _context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.Id == oldOrderId && o.ApplicationUserId == userId);
-
-            if (oldOrder == null) return NotFound("الطلب غير موجود");
-
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
-            {
-                var newOrder = new Order
-                {
-                    ApplicationUserId = userId,
-                    OrderDate = DateTime.Now,
-                    TotalPrice = oldOrder.TotalPrice,
-                    IsServiceOrder = oldOrder.IsServiceOrder,
-                    ArtisanId = oldOrder.ArtisanId // لو كان طلب خدمة بننسخ الحرفي كمان
-                };
-
-                _context.Orders.Add(newOrder);
-                await _context.SaveChangesAsync();
-
-                // لو طلب منتجات (عِدد وأدوات) بننسخ الأصناف
-                if (oldOrder.OrderItems != null && oldOrder.OrderItems.Any())
-                {
-                    foreach (var item in oldOrder.OrderItems)
-                    {
-                        _context.OrderItems.Add(new OrderItem
-                        {
-                            OrderId = newOrder.Id,
-                            ProductId = item.ProductId,
-                            Quantity = item.Quantity,
-                            UnitPrice = item.UnitPrice
-                        });
-                    }
-                }
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-                return Ok(new { message = "تمت إعادة الطلب بنجاح" });
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                return BadRequest("فشل في تكرار الطلب");
-            }
-        }
-        //.
-        //ah
-
-        [HttpPost("create-service-request")]
-        public async Task<IActionResult> CreateServiceRequest([FromBody] CreateServiceRequestDto dto)
-        {
-            if (dto == null) return BadRequest("بيانات الطلب غير مكتملة");
-
-            try
-            {
-                var newRequest = new ServiceRequest
-                {
-                    ServiceName = dto.ServiceName,
-                    Description = dto.Description,
-                    ArtisanId = dto.ArtisanId,
-                    ClientId = dto.ClientId,
-                    RequestDate = DateTime.Now,
-                    Status = RequestStatus.Pending
-                };
-
-                _context.ServiceRequests.Add(newRequest);
-                await _context.SaveChangesAsync(); // التأكد من الحفظ أولاً
-
-                
-
-                // 1. هنجيب اسم العميل عشان الحرفي يعرف مين باعتله
-                var client = await _context.Users.FindAsync(dto.ClientId);
-                var clientName = client?.FullName ?? "عميل جديد";
-
-                // 2. نبعت الإشعار للحرفي (ArtisanId)
-                await _notificationService.SendNotificationAsync(
-                    dto.ArtisanId.ToString(),
-                    "طلب جديد! ",
-                    $"قام {clientName} بطلب خدمة: {dto.ServiceName}",
-                    "/orders/details/" + newRequest.Id // رابط تفاصيل الطلب
-                );
-
-                // ------------------------------
-
-                return Ok(new
-                {
-                    message = "تم إرسال طلبك بنجاح! يمكنك متابعته من شاشة طلباتك.",
-                    requestId = newRequest.Id
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "حدث خطأ أثناء إرسال الطلب، حاول مرة أخرى.");
-            }
-        }
-
-        [HttpGet("invoice-details/{orderId}")]
-        public async Task<IActionResult> GetDetailedInvoice(int orderId)
-        {
-            // 1.  البيانات من الداتابيز مع الربط بالجداول الأخرى 
-            var order = await _context.Orders
-                .Include(o => o.User)           // بيانات العميل
-                .Include(o => o.Artisan)        // بيانات الحرفي
-                    .ThenInclude(a => a.User)   // بيانات الحرفي الشخصية الاسم والموباي)
-                .Include(o => o.OrderItems!)    // تفاصيل الجدول (الخدمات أو المعدات)
-                    .ThenInclude(oi => oi.Product)
-                .Include(o => o.ServiceRequest) // الطلب الأصلي -لو موجود
-                .FirstOrDefaultAsync(o => o.Id == orderId);
-
-            // 2. التحقق من وجود الفاتورة
-            if (order == null)
-            {
-                return NotFound(new { message = "عذراً، الفاتورة غير موجودة" });
-            }
-
-            
-            var invoiceData = new
-            {
-                // الجزء العلوي من التصميم
-                Header = new
-                {
-                    InvoiceId = order.Id.ToString("D3"), // عشان تطلع 001
+                    InvoiceNumber = order.Id.ToString("D3"), 
                     Date = order.OrderDate.ToString("yyyy/MM/dd"),
-                    Title = order.IsServiceOrder ? "فاتورة خدمات" : "فاتورة شراء معدات"
+                    ServiceType = order.ServiceRequest?.ServiceName ?? "خدمة فنية"
                 },
 
-                // بيانات العميل اليمين
-                Client = new
+                ClientInfo = new
                 {
-                    Name = order.User?.FullName ?? "عميل تقني",
-                    Phone = order.User?.PhoneNumber,
-                    Address = order.User?.Governorate ?? "غير محدد",
-                    Email = order.User?.Email
+                    Name = order.ServiceRequest?.FullName ?? order.User?.FullName,
+                    Address = order.ServiceRequest?.Address ?? order.User?.Governorate,
                 },
 
-                // بيانات الحرفي الشمال
-                Artisan = order.IsServiceOrder ? new
+                ProviderInfo = order.CompanyId != null ? new
                 {
+                    Type = "شركة",
+                    Name = order.Company?.CompanyName,
+                }
+                : new
+                {
+                    Type = "حرفي",
                     Name = order.Artisan?.User?.FullName,
-                    Phone = order.Artisan?.User?.PhoneNumber,
-                    Address = order.Artisan?.ServiceArea,
-                    Email = order.Artisan?.User?.Email
-                } : null,
+                },
 
-                // جدول الخدمات/المعدات 
-                Details = order.OrderItems?.Select(item => new {
-                    ServiceName = item.Product?.Name ?? "خدمة صيانة",
+                InvoiceItems = order.OrderItems?.Select(item => new
+                {
+                    ServiceName = item.CustomItemName ?? "خدمة صيانة",
                     Quantity = item.Quantity,
                     Price = item.UnitPrice,
                     Total = item.Quantity * item.UnitPrice
                 }).ToList(),
 
-                // ملخص الحسابات الأسفل
                 Summary = new
                 {
-                    SubTotal = order.TotalPrice,
-                    ServiceFees = order.IsServiceOrder ? 30 : 0, // مثال لرسوم الخدمة
-                    Discount = 0,
-                    FinalTotal = order.TotalPrice + (order.IsServiceOrder ? 30 : 0),
-                    PaymentMethod = order.PaymentMethod == PaymentMethod.Cash ? "دفع كاش" : "بطاقة بنكية"
+                    FinalTotal = order.TotalPrice,
+                    PaymentMethod = order.PaymentMethod.ToString() 
                 }
-            };
-
-            return Ok(invoiceData);
+            });
         }
-        //-----------------------------------------------------
 
-        // 1. ميثود جلب تفاصيل طلب الخدمة 
-        [HttpGet("service-request-details/{requestId}")]
-        public async Task<ActionResult<ServiceRequestDetailsDto>> GetServiceRequestDetails(int requestId)
+        private static string GetStatusArabic(RequestStatus status) => status switch
         {
-            var request = await _context.ServiceRequests
-                .Include(s => s.Artisan).ThenInclude(a => a.User)
-                .Include(s => s.Client).ThenInclude(c => c.User)
-                .FirstOrDefaultAsync(s => s.Id == requestId);
+            RequestStatus.Pending => "في الانتظار",
+            RequestStatus.Accepted => "تم القبول",
+            RequestStatus.OnTheWay => "في الطريق",
+            RequestStatus.Finished => "مكتمل",
+            RequestStatus.Cancelled => "ملغي",
+            _ => "غير معروف"
+        };
 
-            if (request == null)
-                return NotFound(new { message = "هذا الطلب غير موجود" });
-
-            // بناء الاستجابة بناءً على حالة الطلب 
-            var response = new
-            {
-                Id = request.Id,
-                ServiceName = request.ServiceName,
-                Status = request.Status.ToString(), // القيمة الأصلية (Pending, Accepted, إلخ)
-                StatusArabic = GetStatusArabic(request.Status), // الترجمة للعرض في التطبيق
-                StatusDescription = GetStatusMessage(request.Status), // الرسالة التوضيحية اللي في الصورة
-
-                OrderDetails = new
-                {
-                    Date = request.RequestDate.ToString("yyyy/MM/dd"),
-                    Location = request.Client?.User?.Governorate ?? "غير محدد",
-                    Description = request.Description ?? "لا يوجد وصف",
-                    PriceStatus = request.Status == RequestStatus.Pending ? "لم يتم التحديد" : "تم الاتفاق"
-                },
-
-                // بيانات الحرفي تظهر فقط إذا تم قبول الطلب (Accepted وما بعدها)
-                ArtisanInfo = (request.Status == RequestStatus.Pending || request.ArtisanId == null) ? null : new
-                {
-                    Name = request.Artisan?.User?.FullName,
-                    Phone = request.Artisan?.User?.PhoneNumber,
-                    Job = "فني متخصص"
-                }
-            };
-
-            return Ok(response);
-        }
-        
-
-        // 2. ميثود مساعدة لترجمة الحالات للعربية للعرض في الواجهة
-        private string GetStatusArabic(RequestStatus status)
+        private static string GetStatusMessage(RequestStatus status) => status switch
         {
-            return status switch
-            {
-                RequestStatus.Pending => "في الانتظار",
-                RequestStatus.Accepted => "تم القبول",
-                RequestStatus.OnTheWay => "في الطريق",
-                RequestStatus.Finished => "مكتمل",
-                RequestStatus.Cancelled => "ملغي",
-                _ => "غير معروف"
-            };
-        }
-
-        // 3. ميثود مساعدة لجلب الرسالة التوضيحية التي تظهر تحت اسم الخدمة  
-        private string GetStatusMessage(RequestStatus status)
-        {
-            return status switch
-            {
-                RequestStatus.Pending => "تم إرسال الطلب للحرفي وجاري انتظار الرد",
-                RequestStatus.Accepted => "وافق الحرفي على طلبك، سيتم التواصل معك قريباً",
-                RequestStatus.OnTheWay => "الحرفي الآن في طريقه إليك",
-                RequestStatus.Finished => "تم تنفيذ الخدمة بنجاح، يمكنك تقييم الحرفي الآن",
-                RequestStatus.Cancelled => "عذراً، تم إلغاء هذا الطلب",
-                _ => ""
-            };
-        }
-
-        // 4. ميثود إلغاء الطلب تحديث الحالة بدلاً من الحذف النهائي
-        [HttpPost("cancel-request/{id}")]
-        public async Task<IActionResult> CancelRequest(int id)
-        {
-            var request = await _context.ServiceRequests.FindAsync(id);
-
-            if (request == null) return NotFound();
-
-            // العميل يقدر يلغي الطلب فقط لو لسه "Pending" أو "Accepted" (قبل ما الحرفي يتحرك)
-            if (request.Status == RequestStatus.Pending || request.Status == RequestStatus.Accepted)
-            {
-                request.Status = RequestStatus.Cancelled; 
-                await _context.SaveChangesAsync();
-                return Ok(new { message = "تم إلغاء الطلب بنجاح" });
-            }
-
-            return BadRequest(new { message = "عذراً، لا يمكن إلغاء الطلب في هذه المرحلة" });
-        }
-        //.
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreateOrder(CreateOrderDto dto)
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        //    var order = new Order
-        //    {
-        //        ApplicationUserId = userId,
-        //        OrderDate = DateTime.Now,
-        //        TotalPrice = 0
-        //    };
-
-        //    _context.Orders.Add(order);
-        //    await _context.SaveChangesAsync();
-
-        //    foreach (var item in dto.Items)
-        //    {
-        //        var product = await _context.Products.FindAsync(item.ProductId);
-
-        //        if (product == null)
-        //            return BadRequest("Product not found");
-
-        //        if (product.StockQuantity < item.Quantity)
-        //            return BadRequest("Not enough stock");
-
-        //        var orderItem = new OrderItem
-        //        {
-        //            OrderId = order.Id,
-        //            ProductId = product.Id,
-        //            Quantity = item.Quantity,
-        //            Price = product.Price
-        //        };
-
-        //        product.StockQuantity -= item.Quantity;
-        //        order.TotalPrice += product.Price * item.Quantity;
-
-        //        _context.OrderItems.Add(orderItem);
-        //    }
-
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(order);
-        //}
-
-
-
+        RequestStatus.Pending => "تم إرسال الطلب وجاري انتظار الرد",
+        RequestStatus.Accepted => "تم قبول طلبك",
+            RequestStatus.Finished => "تم تنفيذ الخدمة بنجاح",
+            RequestStatus.Cancelled => "تم إلغاء الطلب",
+            _ => ""
+        };
     }
 }
-

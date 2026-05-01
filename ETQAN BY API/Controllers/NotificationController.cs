@@ -1,7 +1,9 @@
 ﻿using ETQAN.API.Data;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
+using System.Security.Claims;
+using MailKit.Net.Smtp;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -14,7 +16,6 @@ public class NotificationController : ControllerBase
         _context = context;
     }
 
-    // جلب قائمة التنبيهات مع إمكانية الفلترة حسب النوع (Chat/Order)
     [HttpGet("my-notifications")]
     public async Task<IActionResult> GetMyNotifications([FromQuery] string? type = null)
     {
@@ -22,7 +23,6 @@ public class NotificationController : ControllerBase
 
         var query = _context.Notifications.Where(n => n.UserId == userId);
 
-        // إذا أرسل الفرونت إند نوعاً معيناً يتم عمل فلترة
         if (!string.IsNullOrEmpty(type))
         {
             query = query.Where(n => n.NotificationType == type);
@@ -44,7 +44,6 @@ public class NotificationController : ControllerBase
         return Ok(notifications);
     }
 
-    // حساب عدد التنبيهات غير المقروءة لتفعيل العداد الأحمر
     [HttpGet("unread-count")]
     public async Task<IActionResult> GetUnreadCount()
     {
@@ -55,7 +54,6 @@ public class NotificationController : ControllerBase
         return Ok(new { unreadCount = count });
     }
 
-    // تحويل حالة التنبيهات إلى "مقروءة" عند فتح القائمة
     [HttpPost("mark-as-read")]
     public async Task<IActionResult> MarkAsRead()
     {
@@ -70,7 +68,6 @@ public class NotificationController : ControllerBase
         return Ok(new { message = "تم تحديث الحالة لجميع التنبيهات" });
     }
 
-    // ميثود مساعدة لتنسيق الوقت بشكل مبسط
     private static string GetTimeAgo(DateTime dateTime)
     {
         var span = DateTime.Now - dateTime;
@@ -78,4 +75,5 @@ public class NotificationController : ControllerBase
         if (span.TotalHours > 1) return $"منذ {Math.Floor(span.TotalHours)} ساعة";
         return $"منذ {Math.Floor(span.TotalMinutes)} دقيقة";
     }
+
 }

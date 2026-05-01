@@ -11,10 +11,10 @@ namespace ETQAN_BY_API.Services
         Task<bool> UpdateReviewAsync(int reviewId, string clientId, UpdateReviewDto dto);
         Task<List<ReviewReadOnlyDto>> GetMyReviewsAsync(string clientId);
         Task<bool> DeleteReviewAsync(int reviewId, string clientId);
-        Task<bool> UpdateProfileAsync(string userId, UpdateProfileDto dto);
+        Task<bool> UpdateProfileComprehensiveAsync(string userId, ClientProfileUpdateDto dto);
         Task<List<ClientHistoryDto>> GetClientHistoryAsync(string userId, string? status = null);
         Task<bool> DeleteClientAccountAsync(string userId);
-
+        Task<ClientProfileDisplayDto> GetClientInfoAsync(string userId);
 
     }
     //.

@@ -1,8 +1,10 @@
 ﻿using ETQAN.API.Data;
+using ETQAN.API.Models;
 using ETQAN_BY_API.DTO;
 using ETQAN_BY_API.Model.DTOs;
 using ETQAN_BY_API.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -16,11 +18,13 @@ namespace ETQAN_BY_API.Controllers
         private readonly ApplicationDbContext _context;
         //ah
         private readonly IArtisanService _artisanService;
-
-        public ArtisansController(ApplicationDbContext context, IArtisanService artisanService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ArtisansController(ApplicationDbContext context, IArtisanService artisanService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
-            _artisanService = artisanService; //  ربط الخدمة
+            _artisanService = artisanService; 
+            _userManager = userManager;
+            _userManager = userManager;
         }
         //.
 
@@ -39,7 +43,6 @@ namespace ETQAN_BY_API.Controllers
                 Id = a.ApplicationUserId,
                 Name = a.User.FullName,
                 JobName = a.Job.Name,
-                Price = a.StartingPrice,
                 Rating = 4.8,
                 ImageUrl = a.User.ProfilePicture ?? "/images/Artisans/default.svg"
             }).ToListAsync();
@@ -47,45 +50,7 @@ namespace ETQAN_BY_API.Controllers
             return Ok(result);
         }
 
-        //[HttpGet("{id}")]
-        //[Authorize]
-        //public async Task<IActionResult> GetById(string id)
-        //{
-        //    try
-        //    {
-        //        var artisan = await _context.Artisans
-        //            .Include(a => a.User)
-        //            .Include(a => a.Job)
-        //            .Include(a => a.Portfolio)
-        //            .FirstOrDefaultAsync(a => a.ApplicationUserId == id);
 
-        //        if (artisan == null)
-        //        {
-        //            return NotFound(new { message = "هذا الحرفي غير موجود" });
-        //        }
-
-        //var result = new ArtisanDetailsDto
-        //{
-        //    Id = artisan.ApplicationUserId,
-        //    FullName = artisan.User.FullName,
-        //    JobName = artisan.Job?.Name ?? "حرفي",
-        //    Bio = artisan.Bio ?? "لا يوجد نبذة تعريفية حالياً",
-        //    ExperienceYears = artisan.ExperienceYears,
-        //    StartingPrice = artisan.StartingPrice,
-        //    Governorate = artisan.User.Governorate ?? "غير محددة",
-        //    Rating = 4.8,
-        //    ProfilePicture = artisan.User.ProfilePicture ?? "/images/Artisans/default.svg",
-        //    PortfolioImages = artisan.Portfolio != null
-        //        ? artisan.Portfolio.Select(p => p.ImageUrl).ToList()
-        //        : new List<string>()
-        //};
-        // return Ok(result);
-            //        catch (Exception ex)
-            //{
-            //    return StatusCode(500, new { message = "حدث خطأ أثناء جلب بيانات البروفايل", error = ex.Message });
-            //}
-//}
-//}
 //ah
         [HttpGet("{id}")]
         [Authorize]
@@ -109,29 +74,52 @@ namespace ETQAN_BY_API.Controllers
                 return StatusCode(500, new { message = "حدث خطأ أثناء جلب البيانات", error = ex.Message });
             }
         }
-        
+
         //.
-    
+
 
 
         //ah
+        [Authorize(Roles = "Artisan")]
         [HttpPut("update-profile")]
-        [Authorize]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateArtisanProfileDto dto)
+        public async Task<IActionResult> UpdateProfile([FromForm] UpdateArtisanProfileDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "يجب تسجيل الدخول أولاً" });
 
-            var result = await _artisanService.UpdateArtisanProfileAsync(userId, dto);
+            try
+            {
+                var result = await _artisanService.UpdateArtisanProfileAsync(userId, dto);
+                if (!result) return BadRequest(new { message = "حدث خطأ أثناء تحديث البيانات" });
 
-            if (!result)
-                return BadRequest(new { message = "حدث خطأ أثناء تحديث البيانات" });
-
-            return Ok(new { message = "تم تحديث الملف الشخصي بنجاح" });
+                return Ok(new { message = "تم تحديث الملف الشخصي بنجاح" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
+        [Authorize(Roles = "Artisan")]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> UpdateProfile([FromBody] ChangePasswordDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId); 
+
+            if (user == null) return NotFound();
+
+            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            return Ok(new { message = "تم تغيير كلمة السر بنجاح" });
+        }
+
+
+        [Authorize(Roles = "Artisan")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteArtisan(string id)
         {
@@ -141,8 +129,8 @@ namespace ETQAN_BY_API.Controllers
             return Ok(new { message = "تم حذف الحساب بنجاح" });
         }
 
+        [Authorize(Roles = "Artisan")]
         [HttpPost("portfolio/add")]
-        [Authorize]
         public async Task<IActionResult> AddPortfolioImage([FromForm] AddPortfolioImageDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -156,8 +144,8 @@ namespace ETQAN_BY_API.Controllers
             return BadRequest("حدث خطأ أثناء رفع الصورة");
         }
 
+        [Authorize(Roles = "Artisan")]
         [HttpDelete("portfolio/delete/{imageId}")]
-        [Authorize]
         public async Task<IActionResult> DeletePortfolioImage(int imageId)
         {
             var result = await _artisanService.DeleteImageFromPortfolioAsync(imageId);

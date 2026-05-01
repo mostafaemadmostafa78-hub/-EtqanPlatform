@@ -27,46 +27,48 @@ namespace ETQAN_BY_API.Controllers
             this.context = context;
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto dto)
-        {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
-
-            if (user == null)
-                return Unauthorized("Invalid email");
-
-            var validPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
-
-            if (!validPassword)
-                return Unauthorized("Invalid password");
-
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.Id),
-        new Claim(ClaimTypes.Email, user.Email)
-    };
-
-            foreach (var role in roles)
-                claims.Add(new Claim(ClaimTypes.Role, role));
-
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:Issuer"],
-                audience: _configuration["JWT:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(60),
-                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-            );
-
-            return Ok(new
+            [HttpPost("login")]
+            public async Task<IActionResult> Login(LoginDto dto)
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                role = roles.First()
-            });
-        }
+                var user = await _userManager.FindByEmailAsync(dto.Email);
+
+                if (user == null)
+                    return Unauthorized("Invalid email or password");
+
+                var validPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
+
+                if (!validPassword)
+                    return Unauthorized("Invalid email or password");
+
+                var roles = await _userManager.GetRolesAsync(user);
+
+                var claims = new List<Claim>
+            {
+                 new Claim(ClaimTypes.NameIdentifier, user.Id),
+                 new Claim(ClaimTypes.Email, user.Email ?? ""),
+                 new Claim("FullName", user.FullName ?? "User"),
+                 new Claim("Governorate", user.Governorate ?? "Not Specified")
+            };
+
+                foreach (var role in roles)
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+
+                var key = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
+
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["JWT:Issuer"],
+                    audience: _configuration["JWT:Audience"],
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(60),
+                    signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
+                );
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    role = roles.First()
+                });
+            }
     }
 }

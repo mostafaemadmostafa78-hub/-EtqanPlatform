@@ -5,7 +5,7 @@
 namespace ETQAN_BY_API.Migrations
 {
     /// <inheritdoc />
-    public partial class SetDefaultValueForIsImage : Migration
+    public partial class SyncAllModelsAndFixChat : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

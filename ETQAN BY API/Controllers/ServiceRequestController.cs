@@ -13,29 +13,24 @@ namespace ETQAN_BY_API.Controllers
         private readonly ApplicationDbContext _context;
         private readonly NotificationService _notificationService;
 
-        // الكونستراكتور عشان نستخدم الداتابيز والإشعارات
         public ServiceRequestController(ApplicationDbContext context, NotificationService notificationService)
         {
             _context = context;
             _notificationService = notificationService;
         }
 
-        // 1. ميثود تحديث الحالة (قبول أو رفض) وإرسال إشعار للعميل
         [HttpPost("respond-to-request/{id}")]
         public async Task<IActionResult> RespondToRequest(int id, [FromBody] bool accept)
         {
             var serviceRequest = await _context.ServiceRequests.FindAsync(id);
             if (serviceRequest == null) return NotFound("الطلب غير موجود");
 
-            // 1. تحديث الحالة
             serviceRequest.Status = accept ? RequestStatus.Accepted : RequestStatus.Cancelled;
             await _context.SaveChangesAsync();
 
-            // 2. جلب بيانات الحرفي للاسم
             var artisan = await _context.Users.FindAsync(serviceRequest.ArtisanId);
             var artisanName = artisan?.FullName ?? "الحرفي";
 
-            // 3. صياغة الإشعار بشكل احترافي
             string notificationTitle = accept ? "تحديث حالة الطلب" : "إشعار بشأن طلبك";
             string statusMessage = accept ? "تمت الموافقة على" : "نعتذر، تم رفض";
 
@@ -46,7 +41,6 @@ namespace ETQAN_BY_API.Controllers
                 "/client/requests"
             );
 
-            // 4. الرد النهائي للـ API
             return Ok(new
             {
                 success = true,

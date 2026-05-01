@@ -34,7 +34,6 @@ public class JobsController : ControllerBase
                 a.Id,
                 fullName = a.User.FullName,
                 jobName = a.Job.Name,
-                startingPrice = a.StartingPrice,
                 // أي بيانات تانية عايز تعرضها في الكارت
             })
             .ToListAsync();

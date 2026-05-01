@@ -7,7 +7,6 @@ namespace ETQAN_BY_API.DTO
         public string Id { get; set; }
         public string Name { get; set; }
         public string JobName { get; set; } 
-        public decimal Price { get; set; }
         public double Rating { get; set; }
         public string ImageUrl { get; set; }
     }

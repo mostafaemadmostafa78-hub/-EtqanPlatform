@@ -36,13 +36,14 @@ public class ClientProfileController : ControllerBase
 
         if (user == null) return NotFound();
 
-        return Ok(new ClientProfileDto
+        return Ok(new
         {
             FullName = user.FullName,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
             Governorate = user.Governorate ?? "غير محدد",
-            ProfilePicture = user.ProfilePicture ?? "/images/Artisans/default.svg"
+            ProfilePicture = user.ProfilePicture ?? "/images/default-user.png",
+            CoverPicture = user.CoverPicture ?? "/images/default-cover.png"
         });
     }
     //mo
@@ -118,22 +119,38 @@ public class ClientProfileController : ControllerBase
     //}
 
     //ah
-    [HttpPut("update")]
     [Authorize(Roles = "Client")]
-    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
+    [HttpPut("update-profile")]
+    public async Task<IActionResult> UpdateProfile([FromForm] ClientProfileUpdateDto dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        var result = await _clientService.UpdateProfileAsync(userId, dto);
+        var result = await _clientService.UpdateProfileComprehensiveAsync(userId, dto);
 
         if (result)
             return Ok(new { message = "تم تحديث البيانات بنجاح" });
 
-        return BadRequest(new { message = "فشل تحديث البيانات" });
+        return BadRequest("حدث خطأ أثناء تحديث الملف الشخصي");
+    }
+
+    [Authorize(Roles = "Client")]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null) return NotFound();
+
+        var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+
+        if (!result.Succeeded) return BadRequest(result.Errors);
+
+        return Ok(new { message = "تم تغيير كلمة السر بنجاح" });
     }
 
     //ah
+    [Authorize(Roles = "Client")]
     [HttpDelete("delete-my-account")]
     public async Task<IActionResult> DeleteAccount()
     {
@@ -146,8 +163,9 @@ public class ClientProfileController : ControllerBase
     //.
 
     //ah - تعديل تقييم العميل لعمله السابق
+    [Authorize(Roles = "Client")]
     [HttpPut("review/{reviewId}")]
-    public async Task<IActionResult> UpdateReview(int reviewId, UpdateReviewDto dto)
+    public async Task<IActionResult> UpdateReview(int reviewId, [FromBody] UpdateReviewDto dto)
     {
         var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var result = await _clientService.UpdateReviewAsync(reviewId, clientId, dto);
@@ -157,6 +175,7 @@ public class ClientProfileController : ControllerBase
     }
 
     //ah - حذف تقييم
+    [Authorize(Roles = "Client")]
     [HttpDelete("review/{reviewId}")]
     public async Task<IActionResult> DeleteReview(int reviewId)
     {
@@ -168,6 +187,7 @@ public class ClientProfileController : ControllerBase
     }
     //.
     //ah
+    [Authorize(Roles = "Client")]
     [HttpGet("history")]
     public async Task<IActionResult> GetHistory([FromQuery] string? status = null)
     {

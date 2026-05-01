@@ -12,33 +12,65 @@ namespace ETQAN_BY_API.Services
     public class ClientService : IClientService
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager; 
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IFileService _fileService;
 
-        
-        public ClientService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ClientService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IFileService fileService)
         {
             _context = context;
-            _userManager = userManager; 
+            _userManager = userManager;
+            _fileService = fileService;
         }
 
-
-
-        // 1. جلب بيانات البروفايل الأساسية
-        public async Task<ClientProfileDto> GetClientInfoAsync(string userId)
+        public async Task<ClientProfileDisplayDto> GetClientInfoAsync(string userId)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return null;
 
-            return new ClientProfileDto
+            return new ClientProfileDisplayDto
             {
                 FullName = user.FullName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Governorate = user.Governorate ?? "غير محدد",
-                ProfilePicture = user.ProfilePicture ?? "/images/default-user.png"
+                ProfilePictureUrl = user.ProfilePicture ?? "/images/default-user.png",
+                CoverPictureUrl = user.CoverPicture ?? "/images/default-cover.png"
             };
         }
 
+        public async Task<bool> UpdateProfileComprehensiveAsync(string userId, ClientProfileUpdateDto dto)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return false;
+
+            if (!string.IsNullOrEmpty(dto.FullName))
+                user.FullName = dto.FullName;
+
+            if (!string.IsNullOrEmpty(dto.PhoneNumber))
+                user.PhoneNumber = dto.PhoneNumber;
+
+            if (!string.IsNullOrEmpty(dto.Governorate))
+                user.Governorate = dto.Governorate;
+
+            if (dto.ProfileFile != null)
+            {
+                if (!string.IsNullOrEmpty(user.ProfilePicture))
+                    _fileService.DeleteImage(user.ProfilePicture);
+
+                user.ProfilePicture = await _fileService.UploadImageAsync(dto.ProfileFile, "uploads/profiles/clients");
+            }
+
+            if (dto.CoverPhotoFile != null)
+            {
+                if (!string.IsNullOrEmpty(user.CoverPicture)) 
+                    _fileService.DeleteImage(user.CoverPicture);
+
+                user.CoverPicture = await _fileService.UploadImageAsync(dto.CoverPhotoFile, "uploads/covers/clients");
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
         // 2. جلب سجل الطلبات (History)
         public async Task<List<ClientHistoryDto>> GetClientHistoryAsync(string userId, string? status = null)
         {
@@ -74,41 +106,61 @@ namespace ETQAN_BY_API.Services
             return true;
         }
 
-        public async Task<bool> UpdateProfileAsync(string userId, UpdateProfileDto dto)
-        {
-            var user = await _userManager.FindByIdAsync(userId); // بنجيب اليوزر بالـ UserManager
-            if (user == null) return false;
-
-            // تحديث البيانات الأساسية
-            user.Email = dto.Email;
-            user.PhoneNumber = dto.PhoneNumber;
-            user.Governorate = dto.Governorate;
-
-            // الجزء الخاص بتغيير كلمة السر بأمان
-            if (!string.IsNullOrEmpty(dto.NewPassword))
-            {
-                // بنشيل الباسورد القديمة ونحط الجديدة متشفره بضغطة واحدة
-                var removeResult = await _userManager.RemovePasswordAsync(user);
-                if (removeResult.Succeeded)
-                {
-                    await _userManager.AddPasswordAsync(user, dto.NewPassword);
-                }
-            }
-
-            var result = await _userManager.UpdateAsync(user);
-            return result.Succeeded;
-        }
 
         // تعديل التقييم
         public async Task<bool> UpdateReviewAsync(int reviewId, string clientId, UpdateReviewDto dto)
         {
-            var review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == reviewId && r.ReviewerId == clientId);
+            var review = await _context.Reviews
+                .Include(r => r.Artisan)
+                .Include(r => r.Company)
+                .FirstOrDefaultAsync(r => r.Id == reviewId && r.ReviewerId == clientId);
+
             if (review == null) return false;
+
+            if ((DateTime.Now - review.CreatedAt).TotalHours > 24)
+            {
+                throw new Exception("عذراً، لا يمكن تعديل التقييم بعد مرور 24 ساعة.");
+            }
 
             review.Rating = dto.Rating;
             review.Comment = dto.Comment;
+            review.CreatedAt = DateTime.Now;
 
-            return await _context.SaveChangesAsync() > 0;
+            var saved = await _context.SaveChangesAsync() > 0;
+
+            if (saved)
+            {
+                if (review.ArtisanId.HasValue)
+                    await UpdateArtisanAverageRating(review.ArtisanId.Value);
+                else if (review.CompanyId.HasValue)
+                    await UpdateCompanyAverageRating(review.CompanyId.Value);
+            }
+
+            return saved;
+        }
+
+        private async Task UpdateArtisanAverageRating(int artisanId)
+        {
+            var artisan = await _context.Artisans.Include(a => a.Reviews).FirstOrDefaultAsync(a => a.Id == artisanId);
+            if (artisan != null)
+            {
+                artisan.AverageRating = artisan.Reviews.Any()
+                    ? (decimal)Math.Round(artisan.Reviews.Average(r => (double)r.Rating), 1)
+                    : 0;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task UpdateCompanyAverageRating(int companyId)
+        {
+            var company = await _context.Companies.Include(c => c.Reviews).FirstOrDefaultAsync(c => c.Id == companyId);
+            if (company != null)
+            {
+                company.AverageRating = company.Reviews.Any()
+                    ? (decimal)Math.Round(company.Reviews.Average(r => (double)r.Rating), 1)
+                    : 0;
+                await _context.SaveChangesAsync();
+            }
         }
 
         //حذف التقييم
@@ -132,12 +184,12 @@ namespace ETQAN_BY_API.Services
                 .Select(r => new ReviewReadOnlyDto
                 {
                     Id = r.Id,
-                    Rating = r.Rating,
+                    Rating = (decimal)Math.Round((double)r.Rating, 1),
                     Comment = r.Comment,
                     ReviewerId = r.ReviewerId,
                     CreatedAt = r.CreatedAt,
-                    ArtisanName = r.Artisan.User.FullName, 
-                    ArtisanImage = r.Artisan.User.ProfilePicture ?? "/images/default.svg" 
+                    TargetName = r.Artisan.User.FullName, 
+                    TargetImage = r.Artisan.User.ProfilePicture ?? "/images/default.svg" 
                 }).ToListAsync();
         }
     }

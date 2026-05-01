@@ -3,7 +3,7 @@
 public class RegisterArtisanDto
 {
     [Required]
-    public string Fullname { get; set; } // اسم المستخدم (الاسم بالكامل أفضل)
+    public string Fullname { get; set; } 
 
     [Required, EmailAddress]
     public string Email { get; set; }
@@ -18,7 +18,7 @@ public class RegisterArtisanDto
     public string phoneNumber { get; set; }
 
     [Required]
-    public int JobId { get; set; } // المهنة
+    public int JobId { get; set; } 
 
     [Required]
     public int MaritalStatus { get; set; } // الحالة الاجتماعية

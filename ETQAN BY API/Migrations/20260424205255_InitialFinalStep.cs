@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ETQAN_BY_API.Migrations
 {
     /// <inheritdoc />
-    public partial class newdatabase : Migration
+    public partial class InitialFinalStep : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -151,6 +151,7 @@ namespace ETQAN_BY_API.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ActionUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NotificationType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -307,9 +308,15 @@ namespace ETQAN_BY_API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    CommercialRegister = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommercialRegister = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExperienceYears = table.Column<int>(type: "int", nullable: true),
+                    WorkingHours = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ServiceArea = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResponseTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsEmergencyAvailable = table.Column<bool>(type: "bit", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -384,14 +391,13 @@ namespace ETQAN_BY_API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Age = table.Column<int>(type: "int", nullable: false),
+                    BirthDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NationalId = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
                     MaritalStatus = table.Column<int>(type: "int", nullable: false),
                     JobId = table.Column<int>(type: "int", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    StartingPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     ExperienceYears = table.Column<int>(type: "int", nullable: false),
-                    Bio = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     WorkHours = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Services = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ServiceArea = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -411,6 +417,51 @@ namespace ETQAN_BY_API.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Artisans_Jobs_JobId",
+                        column: x => x.JobId,
+                        principalTable: "Jobs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyPortfolios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyPortfolios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CompanyPortfolios_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyService",
+                columns: table => new
+                {
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    JobId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyService", x => new { x.CompanyId, x.JobId });
+                    table.ForeignKey(
+                        name: "FK_CompanyService_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanyService_Jobs_JobId",
                         column: x => x.JobId,
                         principalTable: "Jobs",
                         principalColumn: "Id",
@@ -545,7 +596,8 @@ namespace ETQAN_BY_API.Migrations
                     Rating = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     ReviewerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ArtisanId = table.Column<int>(type: "int", nullable: false),
+                    ArtisanId = table.Column<int>(type: "int", nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
                     OrderId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -562,6 +614,12 @@ namespace ETQAN_BY_API.Migrations
                         name: "FK_Reviews_AspNetUsers_ReviewerId",
                         column: x => x.ReviewerId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -595,7 +653,12 @@ namespace ETQAN_BY_API.Migrations
                     { 17, null, "فني تركيب دش" },
                     { 18, null, "تنظيف" },
                     { 19, null, "استشارات هندسية" },
-                    { 20, null, "رش مبيدات" }
+                    { 20, null, "رش مبيدات" },
+                    { 21, null, "نقل أثاث" },
+                    { 22, null, "نقل رمل وزلط" },
+                    { 23, null, "نقل مخلفات بناء" },
+                    { 24, null, "تأجير قلابات" },
+                    { 25, null, "دهانات وتشطيبات" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -666,6 +729,16 @@ namespace ETQAN_BY_API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CompanyPortfolios_CompanyId",
+                table: "CompanyPortfolios",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyService_JobId",
+                table: "CompanyService",
+                column: "JobId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
                 table: "OrderItems",
                 column: "OrderId");
@@ -709,6 +782,11 @@ namespace ETQAN_BY_API.Migrations
                 name: "IX_Reviews_ArtisanId",
                 table: "Reviews",
                 column: "ArtisanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_CompanyId",
+                table: "Reviews",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_OrderId",
@@ -761,7 +839,10 @@ namespace ETQAN_BY_API.Migrations
                 name: "ChatMessages");
 
             migrationBuilder.DropTable(
-                name: "Companies");
+                name: "CompanyPortfolios");
+
+            migrationBuilder.DropTable(
+                name: "CompanyService");
 
             migrationBuilder.DropTable(
                 name: "ContactMessages");
@@ -786,6 +867,9 @@ namespace ETQAN_BY_API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Companies");
 
             migrationBuilder.DropTable(
                 name: "Orders");

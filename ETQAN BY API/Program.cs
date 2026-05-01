@@ -93,6 +93,12 @@ builder.Services.AddSwaggerGen();
 // إضافة خدمة الـ Memory Cache لحاوية الخدمات
 builder.Services.AddMemoryCache();
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    // السطر ده وظيفته يمنع الـ "Infinite Loop" ويخلي الـ JSON يطلع كامل بالبيانات المرتبطة
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
+
 //ah
 // تسجيل خدمة الحرفيين في نظام الحقن (DI)
 builder.Services.AddScoped<IArtisanService, ArtisanService>();

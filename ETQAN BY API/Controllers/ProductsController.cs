@@ -18,7 +18,7 @@ namespace ETQAN.API.Controllers
         }
 
         // ==========================================
-        // 🛠️ ميثود مساعدة لتوحيد شكل البيانات (Projection)
+        //  ميثود مساعدة لتوحيد شكل البيانات (Projection)
         // ==========================================
         private IQueryable<ProductDto> MapToDto(IQueryable<Product> query)
         {

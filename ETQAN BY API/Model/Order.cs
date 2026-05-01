@@ -16,13 +16,16 @@ namespace ETQAN.API.Models
         public ApplicationUser User { get; set; }
         //ah
         public bool IsServiceOrder { get; set; } // تمييز النوع :خدمة/متجر
-        public int? ArtisanId { get; set; } // الحرفي المسؤول
+        public string? ArtisanId { get; set; } // الحرفي المسؤول
         public Artisan? Artisan { get; set; } // علاقة لجلب بيانات الحرفي
 
         public int? ServiceRequestId { get; set; } // رابط للطلب الأصلي عشان م نكررش الوصف
         public ServiceRequest? ServiceRequest { get; set; }
         [Required]
         public PaymentMethod PaymentMethod { get; set; }
+
+        public int? CompanyId { get; set; }
+        public Company? Company { get; set; }
         //.
         public ICollection<OrderItem>? OrderItems { get; set; }
     }

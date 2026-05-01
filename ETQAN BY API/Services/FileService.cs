@@ -16,7 +16,6 @@ namespace ETQAN_BY_API.Services
         {
             if (file == null) return null;
 
-            // استخدام ContentRootPath بيخلي الكود يدور من "قلب" المشروع نفسه
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", folderName);
 
             if (!Directory.Exists(uploadsFolder))
