@@ -150,15 +150,14 @@ public class ClientProfileController : ControllerBase
     }
 
     //ah
-    [Authorize(Roles = "Client")]
-    [HttpDelete("delete-my-account")]
+    [HttpDelete("delete-account")]
     public async Task<IActionResult> DeleteAccount()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var result = await _clientService.DeleteClientAccountAsync(userId);
+        var result = await _clientService.DeleteClientAccountAsync(userId); 
 
-        if (result) return Ok(new { message = "تم حذف الحساب بنجاح" });
-        return BadRequest("فشل حذف الحساب");
+        if (!result) return NotFound();
+        return Ok(new { message = "تم حذف الحساب بنجاح" });
     }
     //.
 

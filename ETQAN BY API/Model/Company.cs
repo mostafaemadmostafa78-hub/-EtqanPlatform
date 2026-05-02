@@ -23,6 +23,8 @@ public class Company
     public bool IsEmergencyAvailable { get; set; }
     public string? CoverPhoto { get; set; }
     public decimal AverageRating { get; set; } = 0;
+    public int CompletedOrdersCount { get; set; } = 0;
+    public bool IsDeleted { get; set; } = false;
     public ICollection<ServiceRequest> Requests { get; set; } = new List<ServiceRequest>();
     public string ApplicationUserId { get; set; }
     public ApplicationUser User { get; set; }

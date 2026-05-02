@@ -12,6 +12,7 @@ namespace ETQAN.API.Models
         [Required]
         public string ApplicationUserId { get; set; }
         public ApplicationUser User { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public ICollection<ServiceRequest>? Requests { get; set; }
         public ICollection<Review>? Reviews { get; set; }
     }

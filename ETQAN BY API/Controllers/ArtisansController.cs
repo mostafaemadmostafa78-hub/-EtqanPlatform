@@ -118,14 +118,13 @@ namespace ETQAN_BY_API.Controllers
             return Ok(new { message = "تم تغيير كلمة السر بنجاح" });
         }
 
-
-        [Authorize(Roles = "Artisan")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteArtisan(string id)
+        [HttpDelete("delete-account")]
+        public async Task<IActionResult> DeleteAccount()
         {
-            var result = await _artisanService.DeleteArtisanAsync(id);
-            if (!result) return NotFound("فشل الحذف، الحرفي غير موجود");
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _artisanService.DeleteArtisanAccountAsync(userId); 
 
+            if (!result) return NotFound();
             return Ok(new { message = "تم حذف الحساب بنجاح" });
         }
 

@@ -4,18 +4,17 @@ namespace ETQAN_BY_API.DTO
 {
     public class ContactFormDto
     {
+        [Required]
+        public string Name { get; set; }
 
-        // بيانات اختيارية لو العميل مش مسجل دخول، لكن لو مسجل بناخدها من الـ Token
-        public string? Name { get; set; }
-        public string? Email { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
 
-        public string? MessageContent { get; set; } // الخانة الكبيرة في شاشة "تواصل معنا"
-        public string? Complaint { get; set; }  // الخانة اللي في الـ Popup (قدم شكوتك)
+        public string? MessageContent { get; set; }
+        public string? Complaint { get; set; }
 
-        public int? ArtisanId { get; set; }  // رقم الحرفي اللي بنشتكيه
-        public int? ReviewId { get; set; }   // رقم التقييم لو بنشتكي من تعليق معين
-
+        public string? ArtisanId { get; set; }
+        public int? CompanyId { get; set; }
     }
-}     
-    
-
+}

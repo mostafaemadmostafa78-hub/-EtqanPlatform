@@ -39,7 +39,8 @@ namespace ETQAN_BY_API.Controllers
                 .Include(c => c.User)
                 .Include(c => c.Reviews)
                 .Where(c => c.ServiceIds != null && c.ServiceIds.Contains(jobIdStr))
-                .Select(c => new {
+                .Select(c => new
+                {
                     c.Id,
                     c.CompanyName,
                     c.User.ProfilePicture,
@@ -61,7 +62,8 @@ namespace ETQAN_BY_API.Controllers
                 .Include(c => c.User)
                 .Include(c => c.Reviews)
                 .Where(c => c.CompanyName.Contains(name))
-                .Select(c => new {
+                .Select(c => new
+                {
                     c.Id,
                     c.CompanyName,
                     c.User.ProfilePicture,
@@ -153,7 +155,8 @@ namespace ETQAN_BY_API.Controllers
                 JoinedDate = company.User.CreatedAt.ToString("d/M/yyyy"),
                 TotalReviews = company.Reviews?.Count() ?? 0,
 
-                Reviews = company.Reviews.Select(r => new {
+                Reviews = company.Reviews.Select(r => new
+                {
                     r.Id,
                     r.Rating,
                     r.Comment,
@@ -231,15 +234,21 @@ namespace ETQAN_BY_API.Controllers
 
             return Ok(new { message = "تم حفظ التقييم بنجاح" });
         }
-
         private async Task UpdateCompanyAverageRating(int companyId)
         {
-            var company = await _context.Companies.Include(c => c.Reviews).FirstOrDefaultAsync(c => c.Id == companyId);
+            var company = await _context.Companies
+                .Include(c => c.Reviews)
+                .FirstOrDefaultAsync(c => c.Id == companyId);
+
             if (company != null)
             {
                 company.AverageRating = company.Reviews.Any()
                     ? (decimal)Math.Round(company.Reviews.Average(r => (double)r.Rating), 1)
                     : 0;
+
+                company.CompletedOrdersCount = await _context.ServiceRequests
+                    .CountAsync(r => r.CompanyId == company.Id && r.Status == RequestStatus.Finished);
+
                 await _context.SaveChangesAsync();
             }
         }
@@ -377,48 +386,27 @@ namespace ETQAN_BY_API.Controllers
         public async Task<IActionResult> DeleteAccount()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null) return NotFound(new { message = "المستخدم غير موجود" });
 
             var company = await _context.Companies
-                .Include(c => c.Portfolio)
-                .Include(c => c.Reviews)
                 .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
-            if (company != null)
+            if (company == null)
+                return NotFound(new { message = "الحساب غير موجود" });
+
+            company.IsDeleted = true;
+
+            var user = await _userManager.FindByIdAsync(company.ApplicationUserId);
+            if (user != null)
             {
-                if (company.Portfolio != null && company.Portfolio.Any())
-                {
-                    foreach (var item in company.Portfolio)
-                    {
-                        var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", item.ImageUrl.TrimStart('/'));
-                        if (System.IO.File.Exists(fullPath)) System.IO.File.Delete(fullPath);
-                    }
-                    _context.CompanyPortfolios.RemoveRange(company.Portfolio);
-                }
-
-                if (!string.IsNullOrEmpty(user.ProfilePicture))
-                {
-                    _fileService.DeleteImage(user.ProfilePicture);
-                }
-
-                if (!string.IsNullOrEmpty(company.CoverPhoto))
-                {
-                    _fileService.DeleteImage(company.CoverPhoto);
-                }
-
-                _context.Companies.Remove(company);
+                user.LockoutEnabled = true;
+                user.LockoutEnd = DateTimeOffset.MaxValue;
             }
-
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded) return BadRequest(result.Errors);
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "تم حذف الحساب وجميع البيانات المرتبطة به بنجاح" });
+            return Ok(new { message = "تم حذف الحساب بنجاح" });
         }
-     } 
+    }
 }
 
 

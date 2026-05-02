@@ -190,39 +190,22 @@ namespace ETQAN_BY_API.Services
         }
 
         // 6. حذف الحرفي
-        public async Task<bool> DeleteArtisanAsync(string userId)
+        public async Task<bool> DeleteArtisanAccountAsync(string userId)
         {
+            var artisan = await _context.Artisans.FirstOrDefaultAsync(a => a.ApplicationUserId == userId);
+            if (artisan == null) return false;
+
+            artisan.IsDeleted = true;
+
             var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return false;
-
-            var artisan = await _context.Artisans
-                .Include(a => a.Portfolio)
-                .FirstOrDefaultAsync(a => a.ApplicationUserId == userId);
-
-            if (artisan != null)
+            if (user != null)
             {
-                if (artisan.Portfolio != null && artisan.Portfolio.Any())
-                {
-                    foreach (var item in artisan.Portfolio)
-                    {
-                        var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", item.ImageUrl.TrimStart('/'));
-                        if (System.IO.File.Exists(fullPath)) System.IO.File.Delete(fullPath);
-                    }
-                    _context.ArtisanPortfolios.RemoveRange(artisan.Portfolio);
-                }
-
-                if (!string.IsNullOrEmpty(user.ProfilePicture))
-                {
-                    _fileService.DeleteImage(user.ProfilePicture);
-                }
-
-                _context.Artisans.Remove(artisan);
+                user.LockoutEnabled = true;
+                user.LockoutEnd = DateTimeOffset.MaxValue;
             }
 
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded) return false;
-
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         // 7. حذف صورة من المعرض
@@ -293,13 +276,19 @@ namespace ETQAN_BY_API.Services
 
         private async Task UpdateArtisanAverageRating(int artisanId)
         {
-            var artisan = await _context.Artisans.Include(a => a.Reviews).FirstOrDefaultAsync(a => a.Id == artisanId);
+            var artisan = await _context.Artisans
+                .Include(a => a.Reviews)
+                .FirstOrDefaultAsync(a => a.Id == artisanId);
+
             if (artisan != null)
             {
                 artisan.AverageRating = artisan.Reviews.Any()
                     ? (decimal)Math.Round(artisan.Reviews.Average(r => (double)r.Rating), 1)
                     : 0;
-                artisan.CompletedOrdersCount = artisan.Reviews.Count();
+
+                artisan.CompletedOrdersCount = await _context.ServiceRequests
+                    .CountAsync(r => r.ArtisanId == artisan.ApplicationUserId && r.Status == RequestStatus.Finished);
+
                 await _context.SaveChangesAsync();
             }
         }

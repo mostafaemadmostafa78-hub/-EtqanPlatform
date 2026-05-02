@@ -98,10 +98,18 @@ namespace ETQAN_BY_API.Services
         }
         public async Task<bool> DeleteClientAccountAsync(string userId)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null) return false;
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+            if (client == null) return false;
 
-            _context.Users.Remove(user);
+            client.IsDeleted = true;
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                user.LockoutEnabled = true;
+                user.LockoutEnd = DateTimeOffset.MaxValue;
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }

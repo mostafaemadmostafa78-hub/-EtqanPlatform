@@ -45,6 +45,7 @@ public class Artisan
     public bool IsEmergencyAvailable { get; set; } // متاح للطوارئ؟
     public decimal AverageRating { get; set; } = 0;
     public int CompletedOrdersCount { get; set; } = 0; // عدد الطلبات المكتملة
+    public bool IsDeleted { get; set; } = false;
 
     [StringLength(255)]
     public string? CoverPicture { get; set; }

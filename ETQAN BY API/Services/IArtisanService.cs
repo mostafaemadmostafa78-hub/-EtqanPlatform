@@ -24,8 +24,6 @@ namespace ETQAN_BY_API.Services
 
         // 5. التقييمات والحساب
         Task<bool> AddOrUpdateArtisanReviewAsync(string clientId, ArtisanReviewCreateDto dto);
-        Task<bool> DeleteArtisanAsync(string userId);
-
-        // ملاحظة: مسحنا UpdateArtisanPicturesAsync لأنها أصبحت جزء من الميثود الأولى
+        Task<bool> DeleteArtisanAccountAsync(string userId);
     }
 }
