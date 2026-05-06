@@ -35,6 +35,16 @@ public class ArtisanAccountController : ControllerBase
     public async Task<IActionResult> RegisterStep1([FromBody] RegisterArtisanDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (DateTime.TryParse(dto.BirthDate, out DateTime birthDate))
+        {
+            var age = DateTime.Today.Year - birthDate.Year;
+            if (birthDate.Date > DateTime.Today.AddYears(-age)) age--;
+
+            if (age < 18)
+            {
+                return BadRequest(new { message = "يجب أن يكون عمر الحرفي 18 سنة على الأقل للانضمام للمنصة." });
+            }
+        }
 
         // توحيد شكل الإيميل (كل الحروف صغيرة)
         string normalizedEmail = dto.Email.ToLower().Trim();
