@@ -35,7 +35,12 @@ namespace ETQAN_BY_API.Controllers
                 if (user == null)
                     return Unauthorized("Invalid email or password");
 
-                var validPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
+            if (await _userManager.IsLockedOutAsync(user))
+            {
+                return Unauthorized("This account has been deleted or suspended.");
+            }
+
+            var validPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
 
                 if (!validPassword)
                     return Unauthorized("Invalid email or password");

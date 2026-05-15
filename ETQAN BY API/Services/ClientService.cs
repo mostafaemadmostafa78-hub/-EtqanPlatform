@@ -108,6 +108,8 @@ namespace ETQAN_BY_API.Services
             {
                 user.LockoutEnabled = true;
                 user.LockoutEnd = DateTimeOffset.MaxValue;
+
+                await _userManager.UpdateSecurityStampAsync(user);
             }
 
             await _context.SaveChangesAsync();
