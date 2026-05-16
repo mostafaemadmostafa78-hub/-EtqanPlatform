@@ -8,18 +8,22 @@ public class Company
 
     [Required]
     public string CompanyName { get; set; }
+
     [Required]
     [StringLength(500)]
     public string CommercialRegister { get; set; }
+
     [Required]
     [StringLength(250)]
     public string Governorate { get; set; }
+
     public string? Description { get; set; }
+    public string? ServiceDetails { get; set; }
     public string? ServiceIds { get; set; }
     public int? ExperienceYears { get; set; }
     public string? WorkingHours { get; set; }
-    public string? ServiceArea { get; set; }      
-    public string? ResponseTime { get; set; }  
+    public string? ServiceArea { get; set; }
+    public string? ResponseTime { get; set; }
     public bool IsEmergencyAvailable { get; set; }
     public string? CoverPhoto { get; set; }
     public decimal AverageRating { get; set; } = 0;

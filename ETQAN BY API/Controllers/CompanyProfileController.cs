@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-
 namespace ETQAN_BY_API.Controllers
 {
     [Route("api/[controller]")]
@@ -30,6 +29,75 @@ namespace ETQAN_BY_API.Controllers
             _fileService = fileService;
         }
 
+        [HttpGet("my-reviews")]
+        [Authorize(Roles = "Company")]
+        public async Task<IActionResult> GetMyReviews()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var company = await _context.Companies.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            if (company == null) return NotFound("الشركة غير موجودة");
+
+            var reviews = await _context.Reviews
+                .Where(r => r.CompanyId == company.Id)
+                .Include(r => r.Client).ThenInclude(cl => cl.User)
+                .OrderByDescending(r => r.CreatedAt)
+                .Select(r => new {
+                    CustomerName = r.Client.User.FullName,
+                    CustomerImage = r.Client.User.ProfilePicture,
+                    Rating = r.Rating.ToString("0.0"),
+                    Comment = r.Comment,
+                    Date = r.CreatedAt.ToString("yyyy/MM/dd"),
+                    TimeAgo = CalculateTimeAgo(r.CreatedAt)
+                })
+                .ToListAsync();
+
+            return Ok(reviews);
+        }
+
+        [HttpGet("{companyId}/public-profile")]
+        public async Task<IActionResult> GetCompanyPublicProfile(int companyId)
+        {
+            var company = await _context.Companies
+                .Include(c => c.User)
+                .Include(c => c.Portfolio)
+                .Include(c => c.Reviews).ThenInclude(r => r.Client).ThenInclude(cl => cl.User)
+                .FirstOrDefaultAsync(c => c.Id == companyId && !c.IsDeleted);
+
+            if (company == null) return NotFound("الشركة غير موجودة أو تم حذف الحساب.");
+
+            var averageRating = company.Reviews != null && company.Reviews.Any()
+                                ? Math.Round(company.Reviews.Average(r => r.Rating), 1)
+                                : 0;
+
+            var result = new
+            {
+                company.Id,
+                company.CompanyName,
+                company.Description,
+                company.ServiceDetails,
+                company.ExperienceYears,
+                company.WorkingHours,
+                company.User.Governorate,
+                ProfilePicture = company.User.ProfilePicture,
+                CoverPhoto = company.CoverPhoto,
+                Portfolio = company.Portfolio.Select(p => p.ImageUrl),
+                AverageRating = averageRating,
+                TotalReviews = company.Reviews?.Count() ?? 0,
+
+                Reviews = company.Reviews.OrderByDescending(r => r.CreatedAt).Select(r => new
+                {
+                    r.Id,
+                    Rating = r.Rating.ToString("0.0"),
+                    r.Comment,
+                    ClientName = r.Client.User.FullName,
+                    ClientImage = r.Client.User.ProfilePicture,
+                    TimeAgo = CalculateTimeAgo(r.CreatedAt)
+                }).ToList()
+            };
+
+            return Ok(result);
+        }
 
         [HttpGet("filter-by-service/{jobId}")]
         public async Task<IActionResult> GetCompaniesByService(int jobId)
@@ -54,7 +122,6 @@ namespace ETQAN_BY_API.Controllers
             return Ok(companies);
         }
 
-
         [HttpGet("search-by-name")]
         public async Task<IActionResult> SearchByName([FromQuery] string name)
         {
@@ -75,38 +142,6 @@ namespace ETQAN_BY_API.Controllers
 
             return Ok(companies);
         }
-        [HttpGet("available-company-services")]
-        public async Task<IActionResult> GetAvailableCompanyServices()
-        {
-            var services = await _context.Jobs
-                .Where(j => j.Id >= 21 && j.Id <= 25)
-                .Select(j => new { j.Id, j.Name })
-                .ToListAsync();
-
-            return Ok(services);
-        }
-
-        [Authorize(Roles = "Company")]
-        [HttpPost("select-services")]
-        public async Task<IActionResult> SelectServices([FromBody] List<int> jobIds)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var company = await _context.Companies.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
-
-            if (company == null) return NotFound();
-
-            var validJobIds = jobIds.Where(id => id >= 21 && id <= 25).ToList();
-
-            if (!validJobIds.Any())
-            {
-                return BadRequest(new { message = "يرجى اختيار خدمات صحيحة خاصة بالشركات (من 21 إلى 25)" });
-            }
-
-            company.ServiceIds = string.Join(",", validJobIds);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "تم تحديث قائمة خدمات الشركة بنجاح" });
-        }
 
         [Authorize(Roles = "Company")]
         [HttpGet("my-profile")]
@@ -122,16 +157,6 @@ namespace ETQAN_BY_API.Controllers
 
             if (company == null) return NotFound();
 
-            var serviceNames = new List<string>();
-            if (!string.IsNullOrEmpty(company.ServiceIds))
-            {
-                var ids = company.ServiceIds.Split(',').Select(int.Parse).ToList();
-                serviceNames = await _context.Jobs
-                    .Where(j => ids.Contains(j.Id))
-                    .Select(j => j.Name)
-                    .ToListAsync();
-            }
-
             var averageRating = company.Reviews != null && company.Reviews.Any()
                                 ? Math.Round(company.Reviews.Average(r => r.Rating), 1)
                                 : 0;
@@ -143,13 +168,13 @@ namespace ETQAN_BY_API.Controllers
             {
                 company.CompanyName,
                 company.Description,
+                company.ServiceDetails,
                 company.ExperienceYears,
                 company.WorkingHours,
                 company.User.Governorate,
                 Email = company.User.Email,
                 Phone = company.User.PhoneNumber,
                 Portfolio = company.Portfolio.Select(p => p.ImageUrl),
-                Services = serviceNames,
                 AverageRating = averageRating,
                 CompletedOrdersCount = completedOrdersCount,
                 JoinedDate = company.User.CreatedAt.ToString("d/M/yyyy"),
@@ -179,6 +204,7 @@ namespace ETQAN_BY_API.Controllers
 
             return Ok(result);
         }
+
         [Authorize(Roles = "Client")]
         [HttpPost("add-company-review")]
         public async Task<IActionResult> AddOrUpdateCompanyReview([FromBody] CompanyReviewCreateDto dto)
@@ -234,6 +260,7 @@ namespace ETQAN_BY_API.Controllers
 
             return Ok(new { message = "تم حفظ التقييم بنجاح" });
         }
+
         private async Task UpdateCompanyAverageRating(int companyId)
         {
             var company = await _context.Companies
@@ -276,6 +303,9 @@ namespace ETQAN_BY_API.Controllers
             if (!string.IsNullOrEmpty(dto.Description))
                 company.Description = dto.Description;
 
+            if (!string.IsNullOrEmpty(dto.ServiceDetails))
+                company.ServiceDetails = dto.ServiceDetails;
+
             if (dto.ExperienceYears.HasValue)
                 company.ExperienceYears = dto.ExperienceYears.Value;
 
@@ -310,8 +340,6 @@ namespace ETQAN_BY_API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "تم تحديث الملف الشخصي بنجاح" });
         }
-
-
 
         [Authorize(Roles = "Company")]
         [HttpPost("change-password")]
@@ -372,6 +400,7 @@ namespace ETQAN_BY_API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "تم حذف الصورة بنجاح" });
         }
+
         private string CalculateTimeAgo(DateTime dateTime)
         {
             var timespan = DateTime.Now - dateTime;
@@ -410,6 +439,3 @@ namespace ETQAN_BY_API.Controllers
         }
     }
 }
-
-
-    
